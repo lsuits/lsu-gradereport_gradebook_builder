@@ -70,7 +70,8 @@ class grade_report_gradebook_builder extends grade_report {
         $data = array(
             'template' => $this->template,
             'templates' => $this->get_templates(),
-            'save_options' => $this->get_available_options()
+            'save_options' => $this->get_available_options(),
+            'aggregations' => $this->get_available_aggregations()
         );
 
         quick_template::render('index.tpl', $data);
@@ -106,6 +107,32 @@ class grade_report_gradebook_builder extends grade_report {
         return get_context_instance(
             $contextlevel, $this->determine_instanceid($contextlevel)
         );
+    }
+
+    function get_available_aggregations() {
+        $visibles = explode(',', get_config('moodle', 'grade_aggregation_visible'));
+        $options = array();
+
+        foreach ($visibles as $aggregation) {
+            $options[$aggregation] = $this->get_aggregation_label($aggregation);
+        }
+
+        return $options;
+    }
+
+    function get_aggregation_label($aggregation) {
+        $_s = function($key) { return get_string($key, 'grades'); };
+        switch ($aggregation) {
+            case GRADE_AGGREGATE_MEAN: return $_s('aggregatemean');
+            case GRADE_AGGREGATE_WEIGHTED_MEAN: return $_s('aggregateweightedmean');
+            case GRADE_AGGREGATE_WEIGHTED_MEAN2: return $_s('aggregateweightedmean2');
+            case GRADE_AGGREGATE_EXTRACREDIT_MEAN: return $_s('aggregateextracreditmean');
+            case GRADE_AGGREGATE_MEDIAN: return $_s('aggregatemedian');
+            case GRADE_AGGREGATE_MIN: return $_s('aggregationmin');
+            case GRADE_AGGREGATE_MAX: return $_s('aggregationmax');
+            case GRADE_AGGREGATE_MODE: return $_s('aggregationmode');
+            case GRADE_AGGREGATE_SUM: return $_s('aggregationsum');
+        }
     }
 
     function get_available_options() {
