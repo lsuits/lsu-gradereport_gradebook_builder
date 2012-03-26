@@ -35,9 +35,15 @@ $USER->grade_last_report[$course->id] = 'gradebook_builder';
 
 $reportname = get_string('pluginname', 'gradereport_gradebook_builder');
 
-print_grade_page_head($course->id, 'report', 'gradebook_builder', $reportname);
+$template = $DB->get_record('gradereport_builder_template', array(
+    'id' => $template_id
+));
 
-$report = new grade_report_gradebook_builder($courseid, $gpr, $context, $template_id);
+$report = new grade_report_gradebook_builder($courseid, $gpr, $context, $template);
+
+$report->inject_js();
+
+print_grade_page_head($course->id, 'report', 'gradebook_builder', $reportname);
 
 $report->output();
 
