@@ -3,8 +3,10 @@
 require_once '../../../config.php';
 require_once $CFG->libdir . '/gradelib.php';
 require_once $CFG->dirroot . '/grade/lib.php';
+require_once $CFG->dirroot . '/grade/report/gradebook_builder/lib.php';
 
 $courseid = required_param('id', PARAM_INT);
+$template_id = optional_param('template', null, PARAM_INT);
 
 $c_param = array('id' => $courseid);
 
@@ -34,5 +36,9 @@ $USER->grade_last_report[$course->id] = 'gradebook_builder';
 $reportname = get_string('pluginname', 'gradereport_gradebook_builder');
 
 print_grade_page_head($course->id, 'report', 'gradebook_builder', $reportname);
+
+$report = new grade_report_gradebook_builder($courseid, $gpr, $context, $template_id);
+
+$report->output();
 
 echo $OUTPUT->footer();
