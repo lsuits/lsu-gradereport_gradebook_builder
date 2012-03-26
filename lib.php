@@ -23,6 +23,18 @@ class grade_report_gradebook_builder extends grade_report {
 
     function inject_js() {
         global $PAGE;
+
+        $module = array(
+            'name' => 'gradereport_gradebook_builder',
+            'fullpath' => '/grade/report/gradebook_builder/js/module.js',
+            'requires' => array('base', 'dom', 'json')
+        );
+
+        $args = array('template_data' => $this->template->data);
+
+        $PAGE->requires->js_init_call(
+            'M.gradereport_gradebook_builder.init', $args, false, $module
+        );
     }
 
     function output() {
