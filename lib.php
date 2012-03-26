@@ -13,6 +13,7 @@ class grade_report_gradebook_builder extends grade_report {
         if (!isset($options[$contextlevel])) {
             // Naturally assume this template is for the user
             $contextlevel = CONTEXT_USER;
+            $data['template'] = null;
         }
 
         $template = new stdClass;
@@ -31,10 +32,17 @@ class grade_report_gradebook_builder extends grade_report {
             $DB->update_record('gradereport_builder_template', $template);
         }
 
-        redirect(new moodle_url('/grade/report/gradebook_builder/index.php', array(
+        // Saved template, let them confirm it
+        redirect(new moodle_url('/grade/report/gradebook_builder/preview.php', array(
             'id' => $this->course->id,
             'template' => $template->id
         )));
+    }
+
+    function build_gradebook($template) {
+        $obj = json_decode($template->data);
+
+        // Do work here
     }
 
     function process_action($target, $action) {

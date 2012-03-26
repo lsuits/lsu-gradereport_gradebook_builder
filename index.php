@@ -19,7 +19,7 @@ require_login($course);
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 require_capability('gradereport/gradebook_builder:view', $context);
-require_capability('moodle/grade:viewall', $context);
+require_capability('moodle/grade:edit', $context);
 
 $gpr = new grade_plugin_return(array(
     'type' => 'report',
