@@ -35,7 +35,7 @@ $preview = json_decode($template->data);
 foreach ($preview->categories as $category) {
     foreach ($category->item as $item) {
         if ($item->itemtype != 'manual') {
-            $item->explain = $_s('explain_' . $item->itemtype);
+            $item->explain = $_s('explain_' . $item->itemmodule);
             $interest[] = html_writer::tag('li', $_s('explain', $item));
         }
     }

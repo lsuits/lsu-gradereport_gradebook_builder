@@ -39,10 +39,97 @@ class grade_report_gradebook_builder extends grade_report {
         )));
     }
 
-    function build_gradebook($template) {
+    function build_gradebook($courseid, $template) {
+        global $DB;
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUSt_EXIST);
+
         $obj = json_decode($template->data);
 
-        // Do work here
+        $aggregation = $obj->aggregation;
+
+        if (!$this->get_aggregation_label($aggregation)) {
+            return 'invalid_aggregation';
+        }
+
+        foreach ($obj->categories as $grade_category) {
+            $category = new grade_category(array('courseid' => $courseid));
+            $category->apply_default_settings();
+            $category->apply_forced_settings();
+
+            $category->fullname = $grade_category->name;
+            $category->aggregation = $aggregation;
+            $category->insert();
+
+            $cat_item = $category->load_grade_item();
+            $cat_item->aggregationcoef = $grade_category->weight;
+            $cat_item->update();
+
+            foreach ($grade_category->items as $grade_item) {
+                if ($grade_item->itemtype == 'manual') {
+                    $item = self::build_manual_item($courseid, $grade_item);
+                } else {
+                    $item = self::build_mod_item($course, $grade_item);
+                }
+                $item->set_parent($category->id, 'gradebook_builder');
+            }
+        }
+
+        return true;
+    }
+
+    function default_course_module($course, $item) {
+        $newcm = new stdClass;
+        $newcm->course = $course->id;
+        $newcm->module = $item->itemmodule;
+        $newcm->instance = 0;
+        $newcm->visible = 0;
+        $newcm->groupmode = $course->groupmode;
+        $newcm->groupingid = 0;
+
+        $newmc->id = add_course_module($newcm);
+        return $newcm;
+    }
+
+    function default_graded_module($course, $item) {
+        $cm = self::default_course_module($course, $item);
+
+        $module = new stdClass;
+        $module->course = $course->id;
+        $module->name = $item->name;
+        $module->intro = '';
+        $module->grade = $item->grademax;
+        $module->coursemodule = $cm->id;
+
+        $add_instance = $item->itemmodule . '_add_instance';
+        return $add_instance($module);
+    }
+
+    function build_mod_item($course, $item) {
+        $instanceid = self::default_course_module($course, $item);
+
+        $grade_item = new grade_item(array(
+            'courseid' => $course->id,
+            'itemtype' => 'mod',
+            'itemmodule' => $item->itemtype,
+            'iteminstance' => $instanceid
+        ));
+
+        $grade_item->aggregationcoef = $item->weight;
+        $grade_item->update();
+
+        return $grade_item;
+    }
+
+    function build_manual_item($courseid, $item) {
+        $grade_item = new grade_item(array(
+            'courseid' => $courseid,
+            'itemtype' => 'manual'
+        ));
+
+        $grade_item->aggregationcoef = $item->weight;
+        $grade_item->insert();
+
+        return $grade_item;
     }
 
     function process_action($target, $action) {
@@ -132,6 +219,7 @@ class grade_report_gradebook_builder extends grade_report {
             case GRADE_AGGREGATE_MAX: return $_s('aggregationmax');
             case GRADE_AGGREGATE_MODE: return $_s('aggregationmode');
             case GRADE_AGGREGATE_SUM: return $_s('aggregationsum');
+            default: return null;
         }
     }
 
