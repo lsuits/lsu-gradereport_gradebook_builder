@@ -151,6 +151,9 @@ class grade_report_gradebook_builder extends grade_report {
 
     function inject_js() {
         global $PAGE;
+
+        $PAGE->requires->js('/grade/report/gradebook_builder/jquery.js');
+        $PAGE->requires->js('/grade/report/gradebook_builder/app.js');
     }
 
     function output() {
