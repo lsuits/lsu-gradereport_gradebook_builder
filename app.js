@@ -114,4 +114,43 @@ $(document).ready(function() {
         }
 
     });
+
+    // Convert form to JSON and Submit on save button click
+    $('form#builder').submit(function() {
+        var gb = {};
+
+        gb['name'] = "New Template";
+        gb['aggregation'] = get_selected('select#grading-method');
+        gb['categories'] = [];
+
+        $('div#builder-start').find('table').each(function() {
+            var cat_obj = {};
+
+            cat_obj['name'] = $(this).find('span:first').html();
+            cat_obj['weight'] = 1;
+
+            var parent = $(this);
+
+            var items = [];
+
+            parent.find('td').each(function() {
+                var gi_name = $(this).find('span:first').clone().children().remove().end().text().trim();
+                var gi_points = $(this).find('span:last').html().split(' ')[0];
+
+                items.push({
+                    'name': gi_name,
+                    'grademax': gi_points,
+                    'itemtype': 'manual',
+                });
+            });
+
+            cat_obj['items'] = items;
+
+            gb['categories'].push(cat_obj);
+        });
+
+        $('input[name="json"]').val(JSON.stringify(gb));
+
+        return true;
+    });
 });

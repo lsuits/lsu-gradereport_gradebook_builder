@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" id="builder-start">
   <div class="row">
     <div class="span4" id="grade-categories">
       <table class="table table-bordered table-striped" name="Homework">
@@ -155,7 +155,11 @@
         </form>
       </div>
 
-      <button class="btn btn-large btn-primary save-button">Save to Gradebook</button>
+      <form action="preview.php" method="post" id="builder">
+        <input type="hidden" name="json"/>
+
+        <button class="btn btn-large btn-primary" type="submit" id="save-button">Save to Gradebook</button>
+      </form>
     </div>
   </div>
 </div>
