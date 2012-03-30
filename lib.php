@@ -175,8 +175,9 @@ class grade_report_gradebook_builder extends grade_report {
             'courseid' => $this->courseid,
             'template' => $this->template,
             'templates' => $this->get_templates(),
-            'save_options' => $this->get_available_options(),
-            'aggregations' => $this->get_available_aggregations()
+            'grade_options' => $this->get_graded_options(),
+            'save_options' => $this->get_save_options(),
+            'aggregations' => $this->get_aggregations()
         );
 
         $funcs = array(
@@ -228,7 +229,7 @@ class grade_report_gradebook_builder extends grade_report {
         );
     }
 
-    function get_available_aggregations() {
+    function get_aggregations() {
         $visibles = explode(',', get_config('moodle', 'grade_aggregations_visible'));
         $options = array();
 
@@ -255,7 +256,7 @@ class grade_report_gradebook_builder extends grade_report {
         }
     }
 
-    function get_available_options() {
+    function get_save_options() {
         global $DB;
 
         $_s = function($key, $a=null) {
@@ -298,6 +299,25 @@ class grade_report_gradebook_builder extends grade_report {
             if ($templates) {
                 $label = $this->determine_label($contextlevel);
                 $options[$label] = $templates;
+            }
+        }
+
+        return $options;
+    }
+
+    function get_graded_options() {
+        // TODO: make this admin setting
+        $list = get_config('grade_builder', 'acceptable_mods');
+        $acceptable_mods = explode(',', $list);
+
+        $mods = get_plugin_list('mod');
+
+        $options = array(
+            'manual' => get_string('manual_item', 'gradereport_gradebook_builder')
+        );
+        foreach ($mods as $mod => $dir) {
+            if (in_array($mod, $acceptable_mods)) {
+                $options[$mod] = get_string($mod, 'gradereport_gradebook_builder');
             }
         }
 
