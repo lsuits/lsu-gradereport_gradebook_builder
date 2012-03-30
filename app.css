@@ -1,0 +1,56 @@
+html {
+    overflow-y: scroll;
+}
+
+body {
+    padding-top: 20px;
+}
+
+form#category-weights {
+    display: none;
+}
+
+div#grade-category-tmpl {
+    display: none;
+}
+
+div#grade-item-tmpl {
+    display: none;
+}
+
+div#category-weight-tmpl {
+    display: none;
+}
+
+div.point-blank {
+    display: inline;
+    margin-bottom: 0px;
+}
+
+div.point-blank input {
+    margin-bottom: 0px;
+}
+
+span.remove-button {
+    border: 1px solid #333;
+    padding: 0px;
+    border-radius: 4px;
+}
+
+span.remove-item-label {
+    display: none;
+}
+
+span.remove-category-label {
+    display: none;
+}
+
+div.hero-unit {
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+div.hero-unit h1 {
+    text-align: center;
+    font-size: 52px;
+}
