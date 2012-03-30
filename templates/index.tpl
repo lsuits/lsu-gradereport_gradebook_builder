@@ -1,5 +1,10 @@
 <div class="container" id="builder-start">
   <div class="row">
+    <div class="span12">
+        {select templates=$templates}
+    </div>
+  </div>
+  <div class="row">
     <div class="span4" id="grade-categories">
     </div>
 

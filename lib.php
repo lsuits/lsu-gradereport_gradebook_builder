@@ -151,6 +151,7 @@ class grade_report_gradebook_builder extends grade_report {
 
         if (!$template) {
             $template = new stdClass;
+            $template->id = null;
             $template->name = 'New Template';
             $template->contextlevel = CONTEXT_USER;
             $template->instanceid = $this->determine_instanceid(CONTEXT_USER);
@@ -168,6 +169,8 @@ class grade_report_gradebook_builder extends grade_report {
     }
 
     function output() {
+        global $OUTPUT;
+
         $data = array(
             'courseid' => $this->courseid,
             'template' => $this->template,
@@ -176,7 +179,21 @@ class grade_report_gradebook_builder extends grade_report {
             'aggregations' => $this->get_available_aggregations()
         );
 
-        quick_template::render('index.tpl', $data);
+        $funcs = array(
+            'function' => array(
+                'select' => function($templates, &$smarty) use ($data, $OUTPUT) {
+
+                    return $OUTPUT->single_select(
+                        'index.php?id='.$data['courseid'],
+                        'template',
+                        $templates,
+                        $data['template']->id
+                    );
+                }
+            )
+        );
+
+        quick_template::render('index.tpl', $data, 'gradereport_gradebook_builder', $funcs);
     }
 
     function determine_instanceid($contextlevel) {

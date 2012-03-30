@@ -30,12 +30,6 @@ $gpr = new grade_plugin_return(array(
     'courseid' => $courseid
 ));
 
-if (!isset($USER->grade_last_report)) {
-    $USER->grade_last_report = array();
-}
-
-$USER->grade_last_report[$course->id] = 'gradebook_builder';
-
 $reportname = get_string('pluginname', 'gradereport_gradebook_builder');
 
 $template = $DB->get_record('gradereport_builder_template', array(
