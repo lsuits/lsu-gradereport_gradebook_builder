@@ -1,7 +1,7 @@
 $(document).ready(function() {
-    var category_tmpl = $('div#grade-category-tmpl').find('table');
-    var item_tmpl = $('div#grade-item-tmpl').find('tr');
-    var weight_tmpl = $('div#category-weight-tmpl').find('div:first');
+    var category_tmpl = $('div#grade-category-tmpl').find('table'),
+        item_tmpl = $('div#grade-item-tmpl').find('tr'),
+        weight_tmpl = $('div#category-weight-tmpl').find('div:first');
 
     function get_selected(selector) {
         return $(selector).children().filter(':selected').html();
@@ -11,8 +11,8 @@ $(document).ready(function() {
     $('button#add-category').click(function(e) {
         e.preventDefault();
 
-        var category = category_tmpl.clone();
-        var name = $('input#category-name').val();
+        var category = category_tmpl.clone(),
+            name = $('input#category-name').val();
 
         category.attr('name', name);
 
@@ -26,29 +26,25 @@ $(document).ready(function() {
 
         $('select#add-item-category').append('<option>' + name + '</option>');
 
-        var weight = weight_tmpl.clone();
-
-        weight.attr('name', name);
-
-        weight.find('span:first').replaceWith('<span>' + name + '</span>');
-
-        $('fieldset').append(weight);
+        $('fieldset').append(weight_tmpl
+            .clone().attr('name', name)
+            .find('span:first').replaceWith('<span>' + name + '</span>')
+        );
     });
 
     // Add grade item
     $('button#add-item').click(function(e) {
         e.preventDefault();
 
-        var category_name = get_selected('select#add-item-category');
+        var category_name = get_selected('select#add-item-category'),
+            category = $('table[name="' + category_name + '"]').find('tbody'),
+            to_add = $('input#grade-item-num-add').val(),
+            i = 0;
 
-        var category = $('table[name="' + category_name + '"]').find('tbody');
-
-        var to_add = $('input#grade-item-num-add').val();
-
-        for (var i = 0; i < to_add; i++) {
-            var item = item_tmpl.clone();
-            var num = $('table[name="' + category_name + '"] tbody').children().length + 1;
-            var name = category_name +  ' ' + num;
+        for (; i < to_add; i++) {
+            var item = item_tmpl.clone(),
+                num = $('table[name="' + category_name + '"] tbody').children().length + 1,
+                name = category_name +  ' ' + num;
 
             item.find('span:first').replaceWith('<span>' + name + ' <span class="label label-important remove-item-label">X &nbsp;Remove</span></span>');
 
@@ -58,10 +54,9 @@ $(document).ready(function() {
 
     // Save item point value
     $('div.point-blank input').live('focusout', function(e) {
-        var elem = $(e.currentTarget);
-        var val = elem.val();
-
-        var td = elem.parent().parent();
+        var elem = $(e.currentTarget),
+            val = elem.val(),
+            td = elem.parent().parent();
 
         elem.parent().remove();
 
@@ -70,8 +65,8 @@ $(document).ready(function() {
 
     // Category remove button
     $('span.remove-category-label').live('click', function(e) {
-        var elem = $(e.currentTarget);
-        var name = elem.parent().find('span:first').html()
+        var elem = $(e.currentTarget),
+            name = elem.parent().find('span:first').html()
 
         elem.parent().parent().parent().parent().parent().remove();
 
@@ -124,14 +119,12 @@ $(document).ready(function() {
         gb['categories'] = [];
 
         $('div#builder-start').find('table').each(function() {
-            var cat_obj = {};
+            var cat_obj = {},
+                parent = $(this),
+                items = [];
 
             cat_obj['name'] = $(this).find('span:first').html();
             cat_obj['weight'] = 1;
-
-            var parent = $(this);
-
-            var items = [];
 
             parent.find('td').each(function() {
                 var gi_name = $(this).find('span:first').clone().children().remove().end().text().trim();
