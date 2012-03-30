@@ -105,9 +105,9 @@ $(document).ready(function() {
 
     // Show or hide category weights
     $('select#grading-method').change(function(e) {
-        var val = get_selected('select#grading-method');
+        var val = $('select#grading-method').val();
 
-        if (val === 'Custom Weights') {
+        if (val === "10") {
             $('form#category-weights').show();
         } else {
             $('form#category-weights').hide();
@@ -120,7 +120,7 @@ $(document).ready(function() {
         var gb = {};
 
         gb['name'] = "New Template";
-        gb['aggregation'] = get_selected('select#grading-method');
+        gb['aggregation'] = $('select#grading-method').val();
         gb['categories'] = [];
 
         $('div#builder-start').find('table').each(function() {
@@ -149,7 +149,7 @@ $(document).ready(function() {
             gb['categories'].push(cat_obj);
         });
 
-        $('input[name="json"]').val(JSON.stringify(gb));
+        $('input[name="data"]').val(JSON.stringify(gb));
 
         return true;
     });

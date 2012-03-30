@@ -1,78 +1,6 @@
 <div class="container" id="builder-start">
   <div class="row">
     <div class="span4" id="grade-categories">
-      <table class="table table-bordered table-striped" name="Homework">
-        <thead>
-          <tr>
-            <th>
-              <h3>
-                <span>Homework</span>
-                <span class="label label-important remove-category-label">X &nbsp;Remove</span>
-              </h3>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <span>Homework 1
-                <span class="label label-important remove-item-label">X &nbsp;Remove</span>
-              </span>
-              <span class="badge pull-right">10 Points</span>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <span>Homework 2
-                <span class="label label-important remove-item-label">X &nbsp;Remove</span>
-              </span>
-              <span class="badge pull-right">10 Points</span>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <span>Homework 3
-                <span class="label label-important remove-item-label">X &nbsp;Remove</span>
-              </span>
-              <div class="input-append point-blank pull-right">
-                <input class="input-tiny"/>
-                <span class="add-on">Points</span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <table class="table table-bordered table-striped" name="Quiz">
-        <thead>
-          <tr>
-            <th>
-              <h3>
-                <span>Quiz</span>
-                <span class="label label-important remove-category-label">X &nbsp;Remove</span>
-              </h3>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <span>Quiz 1
-                <span class="label label-important remove-item-label">X &nbsp;Remove</span>
-              </span>
-              <span class="badge pull-right">10 Points</span>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <span>Quiz 2
-                <span class="label label-important remove-item-label">X &nbsp;Remove</span>
-              </span>
-              <span class="badge pull-right">10 Points</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
 
     <div class="span8">
@@ -83,13 +11,12 @@
 
         <input type="text" class="input-medium" id="category-name" placeholder="Category Name">
         &nbsp;
-        &nbsp;
         <button type="submit" class="btn btn-primary" id="add-category">
           Add
         </button>
       </form>
 
-      <form class="well form-inline">
+      <form id="add-items" class="well form-inline">
         <h3>Add Grade Item(s)</h3>
 
         <br />
@@ -103,10 +30,7 @@
         to
         &nbsp;
         <select class="input-medium" id="add-item-category">
-          <option>Homework</option>
-          <option>Quiz</option>
         </select>
-        &nbsp;
         &nbsp;
         <button type="submit" class="btn btn-primary" id="add-item">
           Add
@@ -118,10 +42,10 @@
 
         <br />
 
-        <select class="input-medium" id="grading-method">
-          <option>Weight By Points</option>
-          <option>Custom Weights</option>
-          <option>Sum of Grades</option>
+        <select class="input-large" id="grading-method">
+          {foreach $aggregations as $value => $name}
+            <option value="{$value}">{$name}</option>
+          {/foreach}
         </select>
 
         <form class="form-horizontal" id="category-weights">
@@ -155,8 +79,14 @@
         </form>
       </div>
 
-      <form action="preview.php" method="post" id="builder">
-        <input type="hidden" name="json"/>
+      <form method="post" id="builder">
+        <input type="hidden" name="id" value="{$courseid}"/>
+        <input type="hidden" name="name" value="{$template->name}"/>
+        <input type="hidden" name="data" value="{$template->data|escape}"/>
+        <input type="hidden" name="contextlevel" value="{$template->contextlevel}"/>
+        {if !empty($template->id) }
+        <input type="hidden" name="template" value="{$template->id}"/>
+        {/if}
 
         <button class="btn btn-large btn-primary" type="submit" id="save-button">Save to Gradebook</button>
       </form>

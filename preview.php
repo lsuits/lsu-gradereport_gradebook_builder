@@ -1,8 +1,10 @@
 <?php
 
 require_once '../../../config.php';
+require_once $CFG->libdir . '/gradelib.php';
+require_once $CFG->dirroot . '/grade/lib.php';
 
-$courseid = required_param('courseid', PARAM_INT);
+$courseid = required_param('id', PARAM_INT);
 $templateid = required_param('template', PARAM_INT);
 
 $c_param = array('id' => $courseid);
@@ -33,7 +35,7 @@ print_grade_page_head($course->id, 'report', 'gradebook_builder', $reportname);
 $interest = array();
 $preview = json_decode($template->data);
 foreach ($preview->categories as $category) {
-    foreach ($category->item as $item) {
+    foreach ($category->items as $item) {
         if ($item->itemtype != 'manual') {
             $item->explain = $_s('explain_' . $item->itemmodule);
             $interest[] = html_writer::tag('li', $_s('explain', $item));
@@ -52,8 +54,8 @@ $msg = $_s('are_you_sure', $warning);
 $base_url = '/grade/report/gradebook_builder/%s.php';
 $url_params = array('id' => $courseid, 'template' => $templateid);
 
-$cancel_url = new moodle(sprintf($base_url, 'index'), $url_params);
-$confirm_url = new moodle(sprintf($base_url, 'build'), $url_params);
+$cancel_url = new moodle_url(sprintf($base_url, 'index'), $url_params);
+$confirm_url = new moodle_url(sprintf($base_url, 'build'), $url_params);
 
 echo $OUTPUT->confirm($msg, $confirm_url, $cancel_url);
 

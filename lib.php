@@ -8,27 +8,27 @@ class grade_report_gradebook_builder extends grade_report {
         global $DB;
 
         $options = $this->get_available_options();
-        $contextlevel = $data['contextlevel'];
+        $contextlevel = $data->contextlevel;
 
         if (!isset($options[$contextlevel])) {
             // Naturally assume this template is for the user
             $contextlevel = CONTEXT_USER;
-            $data['template'] = null;
+            $data->template = null;
         }
 
         $template = new stdClass;
 
-        $template->name = $data['name'];
-        $template->data = $data['data'];
+        $template->name = $data->name;
+        $template->data = $data->data;
 
         $template->contextlevel = $contextlevel;
         $template->instanceid = $this->determine_instanceid($contextlevel);
 
-        if (isset($data['template'])) {
+        if (empty($data->template)) {
             $id = $DB->insert_record('gradereport_builder_template', $template);
             $template->id = $id;
         } else {
-            $template->id = $data['template'];
+            $template->id = $data->template;
             $DB->update_record('gradereport_builder_template', $template);
         }
 
@@ -41,23 +41,33 @@ class grade_report_gradebook_builder extends grade_report {
 
     function build_gradebook($courseid, $template) {
         global $DB;
-        $course = $DB->get_record('course', array('id' => $courseid), '*', MUSt_EXIST);
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
         $obj = json_decode($template->data);
 
         $aggregation = $obj->aggregation;
 
-        if (!$this->get_aggregation_label($aggregation)) {
+        if (!self::get_aggregation_label($aggregation)) {
             return 'invalid_aggregation';
         }
 
+        $course_item = grade_item::fetch(array(
+            'itemtype' => 'course',
+            'courseid' => $courseid
+        ));
+
+        $course_cat = $course_item->load_parent_category();
+        $course_cat->aggregation = $aggregation;
+        $course_cat->update();
+
         foreach ($obj->categories as $grade_category) {
-            $category = new grade_category(array('courseid' => $courseid));
+            $category = new grade_category(array('courseid' => $courseid), false);
             $category->apply_default_settings();
             $category->apply_forced_settings();
 
             $category->fullname = $grade_category->name;
             $category->aggregation = $aggregation;
+            $category->parent = $course_cat->id;
             $category->insert();
 
             $cat_item = $category->load_grade_item();
@@ -66,11 +76,10 @@ class grade_report_gradebook_builder extends grade_report {
 
             foreach ($grade_category->items as $grade_item) {
                 if ($grade_item->itemtype == 'manual') {
-                    $item = self::build_manual_item($courseid, $grade_item);
+                    $item = self::build_manual_item($courseid, $category, $grade_item);
                 } else {
-                    $item = self::build_mod_item($course, $grade_item);
+                    $item = self::build_mod_item($course, $category, $grade_item);
                 }
-                $item->set_parent($category->id, 'gradebook_builder');
             }
         }
 
@@ -104,7 +113,7 @@ class grade_report_gradebook_builder extends grade_report {
         return $add_instance($module);
     }
 
-    function build_mod_item($course, $item) {
+    function build_mod_item($course, $category, $item) {
         $instanceid = self::default_course_module($course, $item);
 
         $grade_item = new grade_item(array(
@@ -115,18 +124,20 @@ class grade_report_gradebook_builder extends grade_report {
         ));
 
         $grade_item->aggregationcoef = $item->weight;
-        $grade_item->update();
+        $grade_item->set_parent($category->id, 'gradebook_builder');
 
         return $grade_item;
     }
 
-    function build_manual_item($courseid, $item) {
+    function build_manual_item($courseid, $category, $item) {
         $grade_item = new grade_item(array(
             'courseid' => $courseid,
-            'itemtype' => 'manual'
-        ));
+            'itemtype' => 'manual',
+            'categoryid' => $category->id
+        ), false);
 
-        $grade_item->aggregationcoef = $item->weight;
+        $grade_item->itemname = $item->name;
+        $grade_item->aggregationcoef = isset($item->weight) ? $item->weight : 0;
         $grade_item->insert();
 
         return $grade_item;
@@ -158,6 +169,7 @@ class grade_report_gradebook_builder extends grade_report {
 
     function output() {
         $data = array(
+            'courseid' => $this->courseid,
             'template' => $this->template,
             'templates' => $this->get_templates(),
             'save_options' => $this->get_available_options(),
@@ -200,7 +212,7 @@ class grade_report_gradebook_builder extends grade_report {
     }
 
     function get_available_aggregations() {
-        $visibles = explode(',', get_config('moodle', 'grade_aggregation_visible'));
+        $visibles = explode(',', get_config('moodle', 'grade_aggregations_visible'));
         $options = array();
 
         foreach ($visibles as $aggregation) {
@@ -218,10 +230,10 @@ class grade_report_gradebook_builder extends grade_report {
             case GRADE_AGGREGATE_WEIGHTED_MEAN2: return $_s('aggregateweightedmean2');
             case GRADE_AGGREGATE_EXTRACREDIT_MEAN: return $_s('aggregateextracreditmean');
             case GRADE_AGGREGATE_MEDIAN: return $_s('aggregatemedian');
-            case GRADE_AGGREGATE_MIN: return $_s('aggregationmin');
-            case GRADE_AGGREGATE_MAX: return $_s('aggregationmax');
-            case GRADE_AGGREGATE_MODE: return $_s('aggregationmode');
-            case GRADE_AGGREGATE_SUM: return $_s('aggregationsum');
+            case GRADE_AGGREGATE_MIN: return $_s('aggregatemin');
+            case GRADE_AGGREGATE_MAX: return $_s('aggregatemax');
+            case GRADE_AGGREGATE_MODE: return $_s('aggregatemode');
+            case GRADE_AGGREGATE_SUM: return $_s('aggregatesum');
             default: return null;
         }
     }
