@@ -260,7 +260,7 @@ class grade_report_gradebook_builder extends grade_report {
         global $DB;
 
         $_s = function($key, $a=null) {
-            return get_string($key, 'gradereport_builder_template', $a);
+            return get_string($key, 'gradereport_gradebook_builder', $a);
         };
 
         $options = array(CONTEXT_USER => $_s('save_user'));
