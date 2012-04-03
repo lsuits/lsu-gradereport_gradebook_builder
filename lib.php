@@ -7,7 +7,7 @@ class grade_report_gradebook_builder extends grade_report {
     function process_data($data) {
         global $DB;
 
-        $options = $this->get_available_options();
+        $options = $this->get_save_options();
         $contextlevel = $data->contextlevel;
 
         if (!isset($options[$contextlevel])) {
@@ -124,6 +124,7 @@ class grade_report_gradebook_builder extends grade_report {
         ));
 
         $grade_item->aggregationcoef = $item->weight;
+        $grade_item->grademax = (float)$item->grademax;
         $grade_item->set_parent($category->id, 'gradebook_builder');
 
         return $grade_item;
@@ -138,6 +139,7 @@ class grade_report_gradebook_builder extends grade_report {
 
         $grade_item->itemname = $item->name;
         $grade_item->aggregationcoef = isset($item->weight) ? $item->weight : 0;
+        $grade_item->grademax = (float)$item->grademax;
         $grade_item->insert();
 
         return $grade_item;
