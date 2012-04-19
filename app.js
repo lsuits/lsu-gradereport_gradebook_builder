@@ -7,12 +7,8 @@ $(document).ready(function() {
         return $(selector).children().filter(':selected').html();
     }
 
-    // Add grade category
-    $('button#add-category').click(function(e) {
-        e.preventDefault();
-
-        var category = category_tmpl.clone(),
-            name = $('input#category-name').val();
+    function add_category(name, weight) {
+        var category = category_tmpl.clone();
 
         category.attr('name', name);
 
@@ -30,37 +26,68 @@ $(document).ready(function() {
             .clone().attr('name', name)
             .find('span:first').replaceWith('<span>' + name + '</span>')
         );
+
+        if (weight) {
+            $('.control-group[name="' + name + '"]').find('input').val(weight);
+        }
+    }
+
+    // Add grade category
+    $('button#add-category').click(function(e) {
+        e.preventDefault();
+
+        var name = $('input#category-name').val();
+
+        add_category(name);
     });
+
+    function add_item(category_name, name, points) {
+        var category = $('table[name="' + category_name + '"]').find('tbody'),
+            to_add = $('input#grade-item-num-add').val(),
+            i = 0;
+
+        for (; i < to_add; i++) {
+            var item = item_tmpl.clone();
+
+            if (!name) {
+                var num = $('table[name="' + category_name + '"] tbody').children().length + 1;
+
+                name = category_name +  ' ' + num;
+            }
+
+            item.find('span:first').replaceWith('<span>' + name + ' <span class="label label-important remove-item-label">X &nbsp;Remove</span></span>');
+
+            if (points) {
+                save_points($(item).find('input'), points);
+            }
+
+            category.append(item);
+        }
+    }
 
     // Add grade item
     $('button#add-item').click(function(e) {
         e.preventDefault();
 
-        var category_name = get_selected('select#add-item-category'),
-            category = $('table[name="' + category_name + '"]').find('tbody'),
-            to_add = $('input#grade-item-num-add').val(),
-            i = 0;
+        var category_name = get_selected('select#add-item-category');
 
-        for (; i < to_add; i++) {
-            var item = item_tmpl.clone(),
-                num = $('table[name="' + category_name + '"] tbody').children().length + 1,
-                name = category_name +  ' ' + num;
-
-            item.find('span:first').replaceWith('<span>' + name + ' <span class="label label-important remove-item-label">X &nbsp;Remove</span></span>');
-
-            category.append(item);
-        }
+        add_item(category_name, '');
     });
+
+    function save_points(item, points) {
+        var td = item.parent().parent();
+
+        item.parent().remove();
+
+        td.append('<span class="badge pull-right">' + points + ' Points</span>');
+    }
 
     // Save item point value
     $('div.point-blank input').live('focusout', function(e) {
-        var elem = $(e.currentTarget),
-            val = elem.val(),
-            td = elem.parent().parent();
+        var elem = $(e.currentTarget);
+        var val = elem.val();
 
-        elem.parent().remove();
-
-        td.append('<span class="badge pull-right">' + val + ' Points</span>');
+        save_points(elem, val);
     });
 
     // Category remove button
@@ -146,4 +173,20 @@ $(document).ready(function() {
 
         return true;
     });
+
+    var gb_json = $('input[name="data"]').val();
+
+    if (gb_json.length > 2) {
+        var gb_obj = JSON.parse(gb_json);
+
+        $.each(gb_obj['categories'], function() {
+            var cat_node = this;
+
+            add_category(cat_node.name);
+
+            $.each(cat_node['items'], function() {
+                add_item(cat_node.name, this.name, this.grademax);
+            });
+        });
+    }
 });
