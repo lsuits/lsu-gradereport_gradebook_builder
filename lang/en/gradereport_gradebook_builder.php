@@ -5,6 +5,9 @@ $string['gradebook_builder:view'] = 'View the '. $string['pluginname'] . ' repor
 
 $string['are_you_sure'] = 'Are you sure you want to create your gradebook from this template? {$a}';
 $string['warning'] = 'The following items will require additional configuration: {$a}';
+$string['items'] = 'This gradebook already has items. The gradebook must be empty
+to be built from a template.';
+
 $string['explain'] = '{$a->name}: {$a->explain}';
 $string['explain_quiz'] = 'Will require questions to be added to the quiz.';
 

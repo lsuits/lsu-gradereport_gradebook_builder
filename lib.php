@@ -43,6 +43,10 @@ class grade_report_gradebook_builder extends grade_report {
         global $DB;
         $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
+        if (self::is_gradebook_established($courseid)) {
+            return 'items';
+        }
+
         $obj = json_decode($template->data);
 
         $aggregation = $obj->aggregation;
@@ -324,5 +328,12 @@ class grade_report_gradebook_builder extends grade_report {
         }
 
         return $options;
+    }
+
+    function is_gradebook_established($courseid = null) {
+        $courseid = $courseid ? $courseid : $this->courseid;
+        $items = grade_item::fetch_all(array('courseid' => $courseid));
+
+        return count($items) > 1;
     }
 }
