@@ -16,7 +16,7 @@ $(document).ready(function() {
             return;
         }
 
-        category.find('h3').replaceWith('<h3><span>' + name + '</span> <span class="label label-important remove-category-label">X &nbsp;Remove</span></h3>');
+        category.find('h3').replaceWith('<h3><span>' + name + '</span> <span class="label label-important remove-category-label">X</span></h3>');
 
         $('div#grade-categories').append(category);
 
@@ -56,7 +56,7 @@ $(document).ready(function() {
                 var itemname = name;
             }
 
-            item.find('span:first').replaceWith('<span>' + itemname + ' <span class="label label-important remove-item-label">X &nbsp;Remove</span></span>');
+            item.find('span:first').replaceWith('<span>' + itemname + ' <span class="label label-important remove-item-label">X</span></span>');
 
             if (points) {
                 save_points($(item).find('input'), points);

@@ -87,7 +87,7 @@
         <th>
           <h3>
             <span></span>
-            <span class="label label-important remove-category-label">X &nbsp;Remove</span>
+            <span class="label label-important remove remove-category-label">X</span>
           </h3>
         </th>
       </tr>
@@ -101,7 +101,7 @@
     <tr>
       <td>
         <span>
-          <span class="label label-important remove-item-label">X &nbsp;Remove</span>
+          <span class="label label-important remove remove-item-label">X</span>
         </span>
         <div class="input-append point-blank pull-right">
           <input class="input-tiny"/>

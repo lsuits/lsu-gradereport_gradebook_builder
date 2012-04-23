@@ -31,10 +31,14 @@
 
 #page-grade-report-gradebook_builder-index span.remove-item-label {
     display: none;
+    float: right;
+    cursor: pointer;
 }
 
 #page-grade-report-gradebook_builder-index span.remove-category-label {
     display: none;
+    float: right;
+    cursor: pointer;
 }
 
 #page-grade-report-gradebook_builder-index div.hero-unit {
@@ -54,7 +58,7 @@
 }
 
 #page-grade-report-gradebook_builder-index div#builder-start.container {
-min-height: 252px;
+  min-height: 252px;
   padding: 10px;
 }
 
@@ -62,7 +66,7 @@ min-height: 252px;
 }
 
 #page-grade-report-gradebook_builder-index div#grade-categories.span4 {
-  width: 45%;
+  width: 40%;
   font-weight: normal;
   line-height: 1.5em;
 }
@@ -79,13 +83,12 @@ min-height: 252px;
   white-space: nowrap;
 }
 
-#page-grade-report-gradebook_builder-index div table h3 {
+#page-grade-report-gradebook_builder-index div#grade-categories.span4 table.table {
    width: 100%;
-   text-align: center;
-   padding: 5px;
-   line-height: 1em;
-   margin: 0;
-   border: 1px solid #ccc;
+}
+
+#page-grade-report-gradebook_builder-index div table h3 {
+   text-align: left;
 }
 
 #page-grade-report-gradebook_builder-index .input-tiny {
@@ -114,4 +117,61 @@ min-height: 252px;
 
 #page-grade-report-gradebook_builder-index .input-xxlarge {
   width: 530px;
+}
+
+#page-grade-report-gradebook_builder-index td {
+  position: static;
+}
+
+#page-grade-report-gradebook_builder-index .pull-right {
+  position: absolute;
+  left: 40%;
+  margin-left: -7em;
+}
+
+#page-grade-report-gradebook_builder-index .table-striped tbody tr:nth-child(odd) td, #page-grade-report-gradebook_builder-index .table-striped tbody tr:nth-child(odd) th {
+  background-color: #f0f0f0;
+} 
+
+#page-grade-report-gradebook_builder-index .table-bordered {
+  border: 1px solid #dddddd;
+  border-left: 0;
+  border-collapse: separate;
+  *border-collapse: collapsed;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+#page-grade-report-gradebook_builder-index .table-bordered th {
+  background-color: #fcecae;
+}
+
+#page-grade-report-gradebook_builder-index .table-bordered th,
+#page-grade-report-gradebook_builder-index .table-bordered td {
+  border-left: 1px solid #dddddd;
+} 
+#page-grade-report-gradebook_builder-index .table-bordered thead:first-child tr:first-child th,
+#page-grade-report-gradebook_builder-index .table-bordered tbody:first-child tr:first-child th,
+#page-grade-report-gradebook_builder-index .table-bordered tbody:first-child tr:first-child td {
+  border-top: 0;
+}
+#page-grade-report-gradebook_builder-index .table-bordered thead:first-child tr:first-child th:first-child,
+#page-grade-report-gradebook_builder-index .table-bordered tbody:first-child tr:first-child td:first-child {
+  -webkit-border-radius: 4px 0 0 0;
+  -moz-border-radius: 4px 0 0 0;
+  border-radius: 4px 0 0 0;
+}
+
+#page-grade-report-gradebook_builder-index .table-bordered thead:last-child tr:last-child th:first-child,
+#page-grade-report-gradebook_builder-index .table-bordered tbody:last-child tr:last-child td:first-child {
+  -webkit-border-radius: 0 0 0 4px;
+  -moz-border-radius: 0 0 0 4px;
+  border-radius: 0 0 0 4px;
+}
+#page-grade-report-gradebook_builder-index .table-bordered thead:last-child tr:last-child th:last-child,
+#page-grade-report-gradebook_builder-index .table-bordered tbody:last-child tr:last-child td:last-child {
+  -webkit-border-radius: 0 0 4px 0;
+  -moz-border-radius: 0 0 4px 0;
+  border-radius: 0 0 4px 0;
 }
