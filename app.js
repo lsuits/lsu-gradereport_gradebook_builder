@@ -50,12 +50,13 @@ $(document).ready(function() {
             var item = item_tmpl.clone();
 
             if (!name) {
-                var num = $('table[name="' + category_name + '"] tbody').children().length + 1;
-
-                name = category_name +  ' ' + num;
+                var num = category.children().length + 1,
+                    itemname = category_name + ' ' + num;
+            } else {
+                var itemname = name;
             }
 
-            item.find('span:first').replaceWith('<span>' + name + ' <span class="label label-important remove-item-label">X &nbsp;Remove</span></span>');
+            item.find('span:first').replaceWith('<span>' + itemname + ' <span class="label label-important remove-item-label">X &nbsp;Remove</span></span>');
 
             if (points) {
                 save_points($(item).find('input'), points);
