@@ -158,10 +158,13 @@ $(document).ready(function() {
                 var gi_name = $(this).find('span:first').clone().children().remove().end().text().trim();
                 var gi_points = $(this).find('span:last').html().split(' ')[0];
 
+                // Gather itemtype and itemmodule
                 items.push({
                     'name': gi_name,
                     'grademax': gi_points,
                     'itemtype': 'manual',
+                    // 'itemtype': 'mod',
+                    // 'itemmodule': 'quiz'
                 });
             });
 
