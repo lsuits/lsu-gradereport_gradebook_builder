@@ -21,7 +21,9 @@
             <input type="text" class="input-tiny" id="grade-item-num-add" value="1">
             &nbsp;
             <select class="input-medium">
-              <option>Normal Grade</option>
+              {foreach $grade_options as $type => $display}
+              <option value="{$type}">{$display}</option>
+              {/foreach}
             </select>
             &nbsp;
             to

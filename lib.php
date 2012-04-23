@@ -312,7 +312,6 @@ class grade_report_gradebook_builder extends grade_report {
     }
 
     function get_graded_options() {
-        // TODO: make this admin setting
         $list = get_config('grade_builder', 'acceptable_mods');
         $acceptable_mods = explode(',', $list);
 
