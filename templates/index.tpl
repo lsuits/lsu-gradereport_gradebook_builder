@@ -20,7 +20,7 @@
         <div class="nowrap">
             <input type="text" class="input-tiny" id="grade-item-num-add" value="1">
             &nbsp;
-            <select class="input-medium">
+            <select id="grade-itemtype" class="input-medium">
               {foreach $grade_options as $type => $display}
               <option value="{$type}">{$display}</option>
               {/foreach}

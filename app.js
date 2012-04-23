@@ -7,6 +7,10 @@ $(document).ready(function() {
         return $(selector).children().filter(':selected').html();
     }
 
+    function get_selected_value(selector) {
+        return $(selector).children().filter(':selected').val();
+    }
+
     function add_category(name, weight) {
         var category = category_tmpl.clone();
 
@@ -56,7 +60,9 @@ $(document).ready(function() {
                 var itemname = name;
             }
 
-            item.find('span:first').replaceWith('<span>' + itemname + ' <span class="label label-important remove-item-label">X &nbsp;Remove</span></span>');
+            var itemtype = get_selected_value('select#grade-itemtype');
+
+            item.find('span:first').replaceWith('<span data-itemtype="' + itemtype + '">' + itemname + ' <span class="label label-important remove-item-label">X &nbsp;Remove</span></span>');
 
             if (points) {
                 save_points($(item).find('input'), points);
@@ -156,15 +162,15 @@ $(document).ready(function() {
 
             parent.find('td').each(function() {
                 var gi_name = $(this).find('span:first').clone().children().remove().end().text().trim();
+                var gi_itemtype = $(this).find('span:first').clone().attr('data-itemtype');
                 var gi_points = $(this).find('span:last').html().split(' ')[0];
 
                 // Gather itemtype and itemmodule
                 items.push({
                     'name': gi_name,
                     'grademax': gi_points,
-                    'itemtype': 'manual',
-                    // 'itemtype': 'mod',
-                    // 'itemmodule': 'quiz'
+                    'itemtype': gi_itemtype == 'manual' ? 'manual' : 'mod',
+                    'itemmodule': gi_itemtype == 'manual' ? '' : gi_itemtype,
                 });
             });
 
