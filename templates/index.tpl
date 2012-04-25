@@ -1,7 +1,10 @@
 <div class="container" id="builder-start">
   <div class="row">
-    <div class="span12">
+    <div class="span4">
         {select templates=$templates}
+        <h3 id="template-name">
+            <span id="template-toggle-input">{$template->name}</span>
+        </h3>
     </div>
   </div>
   <div class="row">

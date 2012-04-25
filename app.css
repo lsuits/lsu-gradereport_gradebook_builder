@@ -1,3 +1,11 @@
+#page-grade-report-gradebook_builder-index select.menutemplate {
+    float: left;
+}
+
+#page-grade-report-gradebook_builder-index h3#template-name{
+    margin-left: 20%;
+}
+
 #page-grade-report-gradebook_builder-index form#category-weights {
     display: none;
 }

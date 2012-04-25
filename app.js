@@ -107,6 +107,21 @@ $(document).ready(function() {
         $('div.control-group[name="' + name + '"]').remove();
     });
 
+    // Template name
+    $("#template-toggle-input").on('click', function() {
+        var s = $(this);
+
+        s.html('<input value="' + s.text() + '"/>')
+         .children("input").focus()
+         .on('focusout', function() {
+             var name = $(this).val();
+             s.html(name);
+             $('#builder').children("input[name=name]").val(name);
+         });
+
+        return false;
+    });
+
     // Item remove button
     $('span.remove-item-label').live('click', function(e) {
         $(e.currentTarget).parent().parent().parent().remove();
@@ -169,6 +184,7 @@ $(document).ready(function() {
                 items.push({
                     'name': gi_name,
                     'grademax': gi_points,
+                    'weight': gi_weight,
                     'itemtype': gi_itemtype == 'manual' ? 'manual' : 'mod',
                     'itemmodule': gi_itemtype == 'manual' ? '' : gi_itemtype,
                 });
