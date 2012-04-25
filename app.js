@@ -12,9 +12,10 @@ $(document).ready(function() {
     }
 
     function add_category(name, weight) {
-        var category = category_tmpl.clone();
+        var category = category_tmpl.clone(),
+            id = new Date().getTime() + '';
 
-        category.attr('name', name);
+        category.attr('name', name).attr('id', id);
 
         if (name === '') {
             return;
@@ -24,7 +25,8 @@ $(document).ready(function() {
 
         $('div#grade-categories').append(category);
 
-        $('select#add-item-category').append('<option>' + name + '</option>');
+        $('select#add-item-category')
+            .append('<option value="' + id + '">' + name + '</option>');
 
         $('fieldset').append(weight_tmpl
             .clone().attr('name', name)
@@ -65,7 +67,7 @@ $(document).ready(function() {
             item.find('span:first').replaceWith('<span data-itemtype="' + itemtype + '">' + itemname + ' <span class="label label-important remove-item-label">X</span></span>');
 
             if (points) {
-                save_points($(item).find('input'), points);
+                item.find('input.input-tiny').val(points);
             }
 
             category.append(item);
@@ -81,30 +83,25 @@ $(document).ready(function() {
         add_item(category_name, '');
     });
 
-    function save_points(item, points) {
-        var td = item.parent().parent();
-
-        item.parent().remove();
-
-        td.append('<span class="badge pull-right">' + points + ' Points</span>');
-    }
-
     // Save item point value
     $('div.point-blank input').live('focusout', function(e) {
         var elem = $(e.currentTarget);
         var val = elem.val();
 
-        save_points(elem, val);
+        // TODO: some kind of numeric evaluation?
     });
 
     // Category remove button
     $('span.remove-category-label').live('click', function(e) {
         var elem = $(e.currentTarget),
-            name = elem.parent().find('span:first').html()
+            table = elem.parent().parent().parent().parent().parent(),
+            id = table.attr('id'),
+            name = elem.parent().find('span:first').html();
 
-        elem.parent().parent().parent().parent().parent().remove();
+        table.remove();
 
         $('div.control-group[name="' + name + '"]').remove();
+        $('#add-item-category').children('option[value=' + id + ']').remove();
     });
 
     // Template name
@@ -114,7 +111,7 @@ $(document).ready(function() {
         s.html('<input value="' + s.text() + '"/>')
          .children("input").focus()
          .on('focusout', function() {
-             var name = $(this).val();
+             var name = $(this).val().trim() == '' ? 'New Template' : $(this).val();
              s.html(name);
              $('#builder').children("input[name=name]").val(name);
          });
@@ -163,7 +160,7 @@ $(document).ready(function() {
     $('form#builder').submit(function() {
         var gb = {};
 
-        gb['name'] = "New Template";
+        gb['name'] = $(this).children('input[name=name]').val();
         gb['aggregation'] = $('select#grading-method').val();
         gb['categories'] = [];
 
@@ -173,18 +170,18 @@ $(document).ready(function() {
                 items = [];
 
             cat_obj['name'] = $(this).find('span:first').html();
-            cat_obj['weight'] = 1;
+            cat_obj['weight'] = gb['aggregation'] === "10" ? 1 : 0;
 
             parent.find('td').each(function() {
                 var gi_name = $(this).find('span:first').clone().children().remove().end().text().trim();
                 var gi_itemtype = $(this).find('span:first').clone().attr('data-itemtype');
-                var gi_points = $(this).find('span:last').html().split(' ')[0];
+                var gi_points = $(this).find('input.input-tiny').val();
 
                 // Gather itemtype and itemmodule
                 items.push({
                     'name': gi_name,
                     'grademax': gi_points,
-                    'weight': gi_weight,
+                    'weight': gb['aggregation'] === "10" ? 1 : 0,
                     'itemtype': gi_itemtype == 'manual' ? 'manual' : 'mod',
                     'itemmodule': gi_itemtype == 'manual' ? '' : gi_itemtype,
                 });
