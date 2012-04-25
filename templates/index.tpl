@@ -49,24 +49,6 @@
         <form class="form-horizontal" id="category-weights">
           <h3>Category Weights</h3>
           <fieldset>
-            <div class="control-group" name="Homework">
-              <label class="control-label"><span>Homework</span></label>
-              <div class="controls">
-                <div class="input-append">
-                  <input type="text" class="input-tiny" value="10"/>
-                  <span class="add-on">%</span>
-                </div>
-              </div>
-            </div>
-            <div class="control-group" name="Quiz">
-              <label class="control-label"><span>Quiz</span></label>
-              <div class="controls">
-                <div class="input-append">
-                  <input type="text" class="input-tiny" value="5"/>
-                  <span class="add-on">%</span>
-                </div>
-              </div>
-            </div>
           </fieldset>
         </form>
       </div>
@@ -119,7 +101,7 @@
     <label class="control-label"><span></span></label>
     <div class="controls">
       <div class="input-append">
-        <input type="text" class="input-tiny" value="5"/>
+        <input type="text" class="input-tiny" value="0"/>
         <span class="add-on">%</span>
       </div>
     </div>

@@ -1,7 +1,15 @@
 $(document).ready(function() {
     var category_tmpl = $('div#grade-category-tmpl').find('table'),
         item_tmpl = $('div#grade-item-tmpl').find('tr'),
-        weight_tmpl = $('div#category-weight-tmpl').find('div:first');
+        weight_tmpl = $('div#category-weight-tmpl').find('div:first'),
+        target_weight = 100;
+
+    function printError(elem, code) {
+        switch (code) {
+            default:
+                elem.css('color', 'red');
+        }
+    }
 
     function get_selected(selector) {
         return $(selector).children().filter(':selected').html();
@@ -13,9 +21,12 @@ $(document).ready(function() {
 
     function add_category(name, weight) {
         var category = category_tmpl.clone(),
+            weights = weight_tmpl.clone(),
+            tw = $('#category-weights fieldset'),
             id = new Date().getTime() + '';
 
         category.attr('name', name).attr('id', id);
+        weights.attr('name', name).attr('data-categoryid', id);
 
         if (name === '') {
             return;
@@ -23,18 +34,20 @@ $(document).ready(function() {
 
         category.find('h3').replaceWith('<h3><span>' + name + '</span> <span class="label label-important remove-category-label">X</span></h3>');
 
+        weights.find('span:first').replaceWith('<span>' + name + '</span>');
+
         $('div#grade-categories').append(category);
 
         $('select#add-item-category')
             .append('<option value="' + id + '">' + name + '</option>');
 
-        $('fieldset').append(weight_tmpl
-            .clone().attr('name', name)
-            .find('span:first').replaceWith('<span>' + name + '</span>')
-        );
+        tw.append(weights);
 
         if (weight) {
-            $('.control-group[name="' + name + '"]').find('input').val(weight);
+            $('.control-group[data-categoryid="' + id + '"]').find('input').val(weight);
+        } else {
+            var sep = target_weight / tw.children().length;
+            tw.find('.input-tiny').val(sep);
         }
     }
 
@@ -100,7 +113,7 @@ $(document).ready(function() {
 
         table.remove();
 
-        $('div.control-group[name="' + name + '"]').remove();
+        $('div.control-group[data-categoryid="' + id + '"]').remove();
         $('#add-item-category').children('option[value=' + id + ']').remove();
     });
 
@@ -167,10 +180,14 @@ $(document).ready(function() {
         $('div#builder-start').find('table').each(function() {
             var cat_obj = {},
                 parent = $(this),
+                id = parent.attr('id'),
+                input = $('.control-group[data-categoryid=' + id + ']').find('input'),
+                weight = input.val(),
                 items = [];
 
             cat_obj['name'] = $(this).find('span:first').html();
-            cat_obj['weight'] = gb['aggregation'] === "10" ? 1 : 0;
+            cat_obj['weight'] = gb['aggregation'] === "10" ?
+                parseFloat(weight) / 100.0 : 0;
 
             parent.find('td').each(function() {
                 var gi_name = $(this).find('span:first').clone().children().remove().end().text().trim();
@@ -202,10 +219,12 @@ $(document).ready(function() {
     if (gb_json.length > 2) {
         var gb_obj = JSON.parse(gb_json);
 
+        $('select#grading-method').val(gb_obj['aggregation']);
+
         $.each(gb_obj['categories'], function() {
             var cat_node = this;
 
-            add_category(cat_node.name);
+            add_category(cat_node.name, cat_node.weight);
 
             $.each(cat_node['items'], function() {
                 add_item(cat_node.name, this.name, this.grademax);
