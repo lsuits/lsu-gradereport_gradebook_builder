@@ -62,7 +62,7 @@ $(document).ready(function() {
 
             var itemtype = get_selected_value('select#grade-itemtype');
 
-            item.find('span:first').replaceWith('<span data-itemtype="' + itemtype + '">' + itemname + ' <span class="label label-important remove-item-label">X &nbsp;Remove</span></span>');
+            item.find('span:first').replaceWith('<span data-itemtype="' + itemtype + '">' + itemname + ' <span class="label label-important remove-item-label">X</span></span>');
 
             if (points) {
                 save_points($(item).find('input'), points);
