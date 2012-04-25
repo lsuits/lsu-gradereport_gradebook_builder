@@ -45,7 +45,7 @@ foreach ($preview->categories as $category) {
 
 $warning = '';
 if (!empty($interest)) {
-    $preview_html = html_writer::start_tag('ul', implode(' ', $interest));
+    $preview_html = html_writer::tag('ul', implode(' ', $interest));
     $warning = html_writer::tag('p', $_s('warning', $preview_html));
 }
 

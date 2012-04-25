@@ -40,9 +40,12 @@ class grade_report_gradebook_builder extends grade_report {
     }
 
     function build_gradebook($courseid, $template) {
-        global $DB;
-        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+        global $DB, $CFG;
 
+        require_once $CFG->dirroot . '/course/lib.php';
+        require_once $CFG->libdir . '/modinfolib.php';
+
+        $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
         if (self::is_gradebook_established($courseid)) {
             return 'items';
         }
@@ -87,20 +90,91 @@ class grade_report_gradebook_builder extends grade_report {
             }
         }
 
+        rebuild_course_cache($course->id);
+
         return true;
     }
 
     function default_course_module($course, $item) {
+        global $DB;
+
         $newcm = new stdClass;
         $newcm->course = $course->id;
-        $newcm->module = $item->itemmodule;
+        $newcm->module = $DB->get_field('modules', 'id', array('name' => $item->itemmodule));
         $newcm->instance = 0;
-        $newcm->visible = 0;
+        $newcm->visible = 1;
+        $newcm->visibleold = 1;
         $newcm->groupmode = $course->groupmode;
+        $newcm->groupmembersonly = 0;
         $newcm->groupingid = 0;
+        $newcm->section = 1;
+        $newcm->score = 0;
+        $newcm->ident = 0;
+        $newcm->completion = 0;
+        $newcm->completionview = 0;
+        $newcm->completionexpected = 0;
+        $newcm->availablefrom = 0;
+        $newcm->availableuntil = 0;
+        $newcm->showavailability = 0;
+        $newcm->showdescription = 0;
 
-        $newmc->id = add_course_module($newcm);
+        $newcm->id = add_course_module($newcm);
         return $newcm;
+    }
+
+    // TODO: Is there a better way to handle this?
+    function default_mod_quiz($module) {
+        if (!class_exists('mod_quiz_display_options')) {
+            global $CFG;
+            require_once $CFG->dirroot . '/mod/quiz/locallib.php';
+        }
+
+        $quiz = get_config('quiz');
+        $module->introformat = 0;
+        $module->timeopen = 0;
+        $module->timeclose = 0;
+        $module->preferredbehaviour = $quiz->preferredbehaviour;
+        $module->attempts = $quiz->attempts;
+        $module->attemptonlast = $quiz->attemptonlast;
+        $module->grademethod = $quiz->grademethod;
+        $module->decimalpoints = $quiz->decimalpoints;
+        $module->questiondecimalpoints = $quiz->questiondecimalpoints;
+        $module->questionsperpage = $quiz->questionsperpage;
+        $module->shufflequestions = $quiz->shufflequestions;
+        $module->shuffleanswers = $quiz->shuffleanswers;
+        $module->sumgrades = 0.00000;
+        $module->timecreated = time();
+        $module->timelimit = $quiz->timelimit;
+        $module->quizpassword = $quiz->password;
+        $module->subnet = $quiz->subnet;
+        $module->browsersecurity = $quiz->browsersecurity;
+        $module->delay1 = $quiz->delay1;
+        $module->delay2 = $quiz->delay2;
+        $module->showuserpicture = $quiz->showuserpicture;
+        $module->showblocks = $quiz->showblocks;
+
+        // No feedback
+        $module->feedbackboundarycount = -1;
+
+        $review_options = array(
+            'attempt', 'correctness', 'marks', 'specificfeedback',
+            'generalfeedback', 'rightanswer', 'overallfeedback'
+        );
+
+        $additional_options = array(
+            'during' => mod_quiz_display_options::DURING,
+            'immediately' => mod_quiz_display_options::IMMEDIATELY_AFTER,
+            'open' => mod_quiz_display_options::LATER_WHILE_OPEN,
+            'closed' => mod_quiz_display_options::AFTER_CLOSE,
+        );
+
+        foreach ($review_options as $review) {
+            $field = 'review' . $review;
+            foreach ($additional_options as $whenname => $when) {
+                $modfield = $field . $whenname;
+                $module->$modfield = ($quiz->$field & $when) ? 1 : 0;
+            }
+        }
     }
 
     function default_graded_module($course, $item) {
@@ -112,24 +186,45 @@ class grade_report_gradebook_builder extends grade_report {
         $module->intro = '';
         $module->grade = $item->grademax;
         $module->coursemodule = $cm->id;
+        $module->section = 1;
 
         $add_instance = $item->itemmodule . '_add_instance';
-        return $add_instance($module);
+        if (!function_exists($add_instance)) {
+            global $CFG;
+            $lib_file = $CFG->dirroot . '/mod/' . $item->itemmodule . '/lib.php';
+            if (!file_exists($lib_file)) {
+                print_error('no_lib_file', 'gradereport_gradebook_builder',
+                    '', $item->itemmodule);
+            }
+            require_once $lib_file;
+
+            $helper_function = 'default_mod_' . $item->itemmodule;
+            self::$helper_function($module);
+        }
+
+        $module->id = $add_instance($module);
+        add_mod_to_section($module);
+
+        return $module;
     }
 
     function build_mod_item($course, $category, $item) {
-        $instanceid = self::default_course_module($course, $item);
+        try {
+            $instance = self::default_graded_module($course, $item);
 
-        $grade_item = new grade_item(array(
-            'courseid' => $course->id,
-            'itemtype' => 'mod',
-            'itemmodule' => $item->itemtype,
-            'iteminstance' => $instanceid
-        ));
+            $grade_item = grade_item::fetch(array(
+                'courseid' => $course->id,
+                'itemtype' => 'mod',
+                'itemmodule' => $item->itemmodule,
+                'iteminstance' => $instance->id
+            ));
+        } catch (Exception $e) {
+            $grade_item = self::build_manual_item($course, $category, $item);
+        }
 
-        $grade_item->aggregationcoef = $item->weight;
+        $grade_item->aggregationcoef = isset($item->weight) ? $item->weight : 0;
         $grade_item->grademax = (float)$item->grademax;
-        $grade_item->set_parent($category->id, 'gradebook_builder');
+        $grade_item->set_parent($category->id);
 
         return $grade_item;
     }
