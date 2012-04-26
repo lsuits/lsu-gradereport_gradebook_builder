@@ -198,9 +198,10 @@ class grade_report_gradebook_builder extends grade_report {
             }
             require_once $lib_file;
 
-            $helper_function = 'default_mod_' . $item->itemmodule;
-            self::$helper_function($module);
         }
+
+        $helper_function = 'default_mod_' . $item->itemmodule;
+        self::$helper_function($module);
 
         $module->id = $add_instance($module);
         add_mod_to_section($module);
