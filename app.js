@@ -44,7 +44,8 @@ $(document).ready(function() {
         tw.append(weights);
 
         if (weight) {
-            $('.control-group[data-categoryid="' + id + '"]').find('input').val(weight);
+            $('.control-group[data-categoryid="' + id + '"]')
+                .find('input').val(weight * 100);
         } else {
             var sep = target_weight / tw.children().length;
             tw.find('.input-tiny').val(sep);
@@ -60,7 +61,7 @@ $(document).ready(function() {
         add_category(name);
     });
 
-    function add_item(category_name, name, points) {
+    function add_item(category_name, name, points, itemtype) {
         var category = $('table[name="' + category_name + '"]').find('tbody'),
             to_add = $('input#grade-item-num-add').val(),
             i = 0;
@@ -75,7 +76,9 @@ $(document).ready(function() {
                 var itemname = name;
             }
 
-            var itemtype = get_selected_value('select#grade-itemtype');
+            if (!itemtype) {
+                var itemtype = get_selected_value('select#grade-itemtype');
+            }
 
             item.find('span:first').replaceWith('<span data-itemtype="' + itemtype + '">' + itemname + ' <span class="label label-important remove-item-label">X</span></span>');
 
@@ -219,7 +222,7 @@ $(document).ready(function() {
     if (gb_json.length > 2) {
         var gb_obj = JSON.parse(gb_json);
 
-        $('select#grading-method').val(gb_obj['aggregation']);
+        $('select#grading-method').val(gb_obj['aggregation']).change();
 
         $.each(gb_obj['categories'], function() {
             var cat_node = this;
@@ -227,7 +230,7 @@ $(document).ready(function() {
             add_category(cat_node.name, cat_node.weight);
 
             $.each(cat_node['items'], function() {
-                add_item(cat_node.name, this.name, this.grademax);
+                add_item(cat_node.name, this.name, this.grademax, this.itemmodule);
             });
         });
     }
