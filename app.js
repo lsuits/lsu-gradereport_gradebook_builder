@@ -4,10 +4,13 @@ $(document).ready(function() {
         weight_tmpl = $('div#category-weight-tmpl').find('div:first'),
         target_weight = 100;
 
-    function printError(elem, code) {
-        switch (code) {
-            default:
-                elem.css('color', 'red');
+    function checkElemWeight(elem, weight) {
+        if (isNaN(weight)) {
+            elem.css('border', '1px solid red');
+            return false;
+        } else {
+            elem.removeAttr('style');
+            return true;
         }
     }
 
@@ -22,7 +25,6 @@ $(document).ready(function() {
     function add_category(name, weight) {
         var category = category_tmpl.clone(),
             weights = weight_tmpl.clone(),
-            tw = $('#category-weights fieldset'),
             id = new Date().getTime() + '';
 
         category.attr('name', name).attr('id', id);
@@ -41,15 +43,33 @@ $(document).ready(function() {
         $('select#add-item-category')
             .append('<option value="' + id + '">' + name + '</option>');
 
-        tw.append(weights);
+        readjustWeight(function(tw) {
+            tw.append(weights);
 
-        if (weight) {
-            $('.control-group[data-categoryid="' + id + '"]')
-                .find('input').val(weight * 100);
-        } else {
-            var sep = target_weight / tw.children().length;
-            tw.find('.input-tiny').val(sep);
-        }
+            if (weight) {
+                $('.control-group[data-categoryid="' + id + '"]')
+                    .find('input').val(weight * 100);
+            }
+        });
+    }
+
+    function readjustWeight(callback) {
+        var tw = $('#category-weights fieldset'),
+            old_sep = Math.round(target_weight / tw.children().length);
+
+        // manipulate size
+        callback(tw);
+
+        var sep = Math.round(target_weight / tw.children().length);
+        tw.find('.input-tiny').each(function(i, elem) {
+            var val = $(elem).val();
+            console.log(parseFloat(val));
+            console.log(old_sep);
+            console.log(sep);
+            if (val === "0" || isNaN(val) || parseFloat(val) == old_sep) {
+                $(elem).val(sep);
+            }
+        });
     }
 
     // Add grade category
@@ -116,7 +136,10 @@ $(document).ready(function() {
 
         table.remove();
 
-        $('div.control-group[data-categoryid="' + id + '"]').remove();
+        readjustWeight(function() {
+            $('div.control-group[data-categoryid="' + id + '"]').remove();
+        });
+
         $('#add-item-category').children('option[value=' + id + ']').remove();
     });
 
@@ -174,11 +197,28 @@ $(document).ready(function() {
 
     // Convert form to JSON and Submit on save button click
     $('form#builder').submit(function() {
-        var gb = {};
+        var gb = {},
+            total_weight = 0,
+            tw = $('#category-weights fieldset'),
+            errors = [];
 
         gb['name'] = $(this).children('input[name=name]').val();
         gb['aggregation'] = $('select#grading-method').val();
         gb['categories'] = [];
+
+        if (gb['aggregation'] === "10") {
+            tw.find('.input-tiny').each(function() {
+                total_weight += isNaN($(this).val()) ? 0 : parseFloat($(this).val());
+            });
+
+            $('#category-weights h3').siblings('.error').remove();
+
+            if (total_weight != 100) {
+                $('#category-weights h3')
+                    .after('<div class="error">Does not total 100%</div>');
+                errors.push('total');
+            }
+        }
 
         $('div#builder-start').find('table').each(function() {
             var cat_obj = {},
@@ -189,6 +229,12 @@ $(document).ready(function() {
                 items = [];
 
             cat_obj['name'] = $(this).find('span:first').html();
+
+            if (!checkElemWeight(input, weight)) {
+                errors.push(cat_obj['name'] + ' bad weight');
+                return;
+            }
+
             cat_obj['weight'] = gb['aggregation'] === "10" ?
                 parseFloat(weight) / 100.0 : 0;
 
@@ -196,6 +242,11 @@ $(document).ready(function() {
                 var gi_name = $(this).find('span:first').clone().children().remove().end().text().trim();
                 var gi_itemtype = $(this).find('span:first').clone().attr('data-itemtype');
                 var gi_points = $(this).find('input.input-tiny').val();
+
+                if (!checkElemWeight($(this).find('input.input-tiny'), gi_points)) {
+                    errors.push(gi_name + ' bad number');
+                    return;
+                }
 
                 // Gather itemtype and itemmodule
                 items.push({
@@ -213,8 +264,7 @@ $(document).ready(function() {
         });
 
         $('input[name="data"]').val(JSON.stringify(gb));
-
-        return true;
+        return errors.length == 0;
     });
 
     var gb_json = $('input[name="data"]').val();
