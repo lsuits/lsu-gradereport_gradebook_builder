@@ -296,7 +296,7 @@ class grade_report_gradebook_builder extends grade_report {
             )
         );
 
-        quick_template::render('index.tpl', $data, 'gradereport_gradebook_builder', $funcs);
+        quick_template::render('gradebook_builder_index.tpl', $data, 'gradereport_gradebook_builder', $funcs);
     }
 
     function determine_instanceid($contextlevel) {
