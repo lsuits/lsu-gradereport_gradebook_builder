@@ -3,7 +3,7 @@
     <div class="span4">
         {select templates=$templates}
         <h3 id="template-name">
-            <span id="template-toggle-input">{$template->name}</span>
+            <span id="template-toggle-input" class="linky">{$template->name}</span>
         </h3>
     </div>
   </div>
