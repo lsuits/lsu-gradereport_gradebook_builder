@@ -267,6 +267,9 @@ $(document).ready(function() {
         return errors.length == 0;
     });
 
+    // Launch change for wight mean
+    $('select#grading-method').change();
+
     var gb_json = $('input[name="data"]').val();
 
     if (gb_json.length > 2) {
