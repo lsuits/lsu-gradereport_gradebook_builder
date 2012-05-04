@@ -89,7 +89,7 @@
           <span class="label label-important remove remove-item-label">X</span>
         </span>
         <div class="input-append point-blank pull-right">
-          <input class="input-tiny"/>
+          <input class="input-tiny" value="100"/>
           <span class="add-on">Points</span>
         </div>
       </td>
