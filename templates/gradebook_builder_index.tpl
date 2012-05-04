@@ -19,7 +19,7 @@
         </button>
       </form>
       <form id="add-items" class="well form-inline">
-        <h3>Add Grade Item(s)</h3>
+        <h3>Add Graded Item(s)</h3>
         <div class="nowrap">
             <input type="text" class="input-tiny" id="grade-item-num-add" value="1">
             &nbsp;

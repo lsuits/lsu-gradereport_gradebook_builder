@@ -11,7 +11,7 @@ to be built from a template.';
 $string['explain'] = '{$a->name}: {$a->explain}';
 $string['explain_quiz'] = 'Will require questions to be added to the quiz.';
 
-$string['manual_item'] = 'Normal Grade';
+$string['manual_item'] = 'Manual Grade Item';
 $string['quiz'] = 'Online Quiz';
 
 $string['acceptable_mods'] = 'Acceptable Mods';
