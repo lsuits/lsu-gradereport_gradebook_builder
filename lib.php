@@ -101,13 +101,13 @@ class grade_report_gradebook_builder extends grade_report {
         $newcm = new stdClass;
         $newcm->course = $course->id;
         $newcm->module = $DB->get_field('modules', 'id', array('name' => $item->itemmodule));
+        $newcm->section = 1;
         $newcm->instance = 0;
         $newcm->visible = 1;
         $newcm->visibleold = 1;
         $newcm->groupmode = $course->groupmode;
         $newcm->groupmembersonly = 0;
         $newcm->groupingid = 0;
-        $newcm->section = 1;
         $newcm->score = 0;
         $newcm->ident = 0;
         $newcm->completion = 0;
@@ -197,14 +197,17 @@ class grade_report_gradebook_builder extends grade_report {
                     '', $item->itemmodule);
             }
             require_once $lib_file;
-
         }
 
         $helper_function = 'default_mod_' . $item->itemmodule;
         self::$helper_function($module);
 
         $module->id = $add_instance($module);
-        add_mod_to_section($module);
+        $cm->instance = $module->id;
+        $cm->section = add_mod_to_section($module);
+
+        global $DB;
+        $DB->update_record('course_modules', $cm);
 
         return $module;
     }
