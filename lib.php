@@ -1,7 +1,6 @@
 <?php
 
 require_once $CFG->dirroot . '/grade/report/lib.php';
-require_once $CFG->libdir . '/quick_template/lib.php';
 
 class grade_report_gradebook_builder extends grade_report {
     function process_data($data) {
@@ -276,30 +275,155 @@ class grade_report_gradebook_builder extends grade_report {
     function output() {
         global $OUTPUT;
 
-        $data = array(
-            'courseid' => $this->courseid,
-            'template' => $this->template,
-            'templates' => $this->get_templates(),
-            'grade_options' => $this->get_graded_options(),
-            'save_options' => $this->get_save_options(),
-            'aggregations' => $this->get_aggregations()
-        );
+        $container = html_writer::tag('div',
+            html_writer::tag('div',
+            html_writer::tag('div',
+            $OUTPUT->single_select('index.php?id=' . $this->courseid,
+            'template', $this->get_templates(), $this->template->id) .
+            html_writer::tag('h3',
+                html_writer::tag('span',
+                $this->template->name,
+                array('id' => 'template-toggle-input', 'class' => 'linky')),
+                array('id' => 'template-name')),
+            array('class' => 'span4')),
+            array('class' => 'row')) .
+            html_writer::tag('div',
+                html_writer::tag('div','',
+                array('class' => 'span4', 'id' => 'grade-categories')) .
+                html_writer::tag('div',
+                    $OUTPUT->heading('Add a Grade Category', 3) .
+                    html_writer::tag('form',
+                    html_writer::empty_tag('input', array(
+                        'type' => 'text',
+                        'class' => 'input-medium',
+                        'id' => 'category-name',
+                        'placeholder' => 'Category Name'
+                    )) . '&nbsp;' .
+                    html_writer::tag('button', 'Add', array(
+                        'type' => 'submit',
+                        'class' => 'btn btn-primary',
+                        'id' => 'add-category'
+                    ))) .
+                    html_writer::tag('form',
+                    $OUTPUT->heading('Add Grade Item(s)', 3) .
+                    html_writer::tag('div',
+                        html_writer::empty_tag('input', array(
+                            'type' => 'text',
+                            'class' => 'input-tiny',
+                            'id' => 'grade-item-num-add',
+                            'value' => '1'
+                        )) . '&nbsp;' .
+                        html_writer::select(
+                            $this->get_graded_options(), 'grade_options', '',
+                            null, array('id' => 'grade-itemtype')
+                        ) . '&nbsp;to&nbsp;Add&nbsp;' .
+                        html_writer::tag('select', '', array(
+                            'id' => 'add-item-category'
+                        )) . '&nbsp;' .
+                        html_writer::tag('button', 'Add', array(
+                            'type' => 'submit',
+                            'class' => 'btn btn-primary',
+                            'id' => 'add-item'
+                        )),
+                        array('class' => 'nowrap')
+                    ),
+                    array('id' => 'add-items', 'class' => 'well form-inline')
+                ) . html_writer::tag('div',
+                    $OUTPUT->heading('Grading Method', 3) .
+                    html_writer::select(
+                        $this->get_aggregations(), 'aggregations', '',
+                        null, array('id' => 'grading-method')
+                    ) . html_writer::tag('form',
+                        $OUTPUT->heading('Category Weights', 3) .
+                        html_writer::tag('fieldset', ''),
+                            array('id' => 'category-weights')),
+                    array('class' => 'well')
+                ) . html_writer::tag('form',
+                    html_writer::empty_tag('input', array(
+                        'type' => 'hidden',
+                        'name' => 'id',
+                        'value' => $this->courseid
+                    )) . html_writer::empty_tag('input', array(
+                        'type' => 'hidden',
+                        'name' => 'name',
+                        'value' => $this->template->name
+                    )) . html_writer::empty_tag('input', array(
+                        'type' => 'hidden',
+                        'name' => 'data',
+                        'value' => $this->template->data
+                    )) . html_writer::empty_tag('input', array(
+                        'type' => 'hidden',
+                        'name' => 'contextlevel',
+                        'value' => $this->template->contextlevel
+                    )) . html_writer::empty_tag('input', array(
+                        'type' => 'hidden',
+                        'name' => 'template',
+                        'value' => $this->template->id
+                    )) . html_writer::tag('button', 'Save to Gradebook', array(
+                        'type' => 'submit',
+                        'id' => 'save-button',
+                        'class' => 'btn btn-large btn-primary'
+                    )),
+                    array('method' => 'post', 'id' => 'builder')
+                ), array('class' => 'span8')),
+                array('class' => 'row'))
+            , array('class' => 'container', 'id' => 'builder-start'));
 
-        $funcs = array(
-            'function' => array(
-                'select' => function($templates, &$smarty) use ($data, $OUTPUT) {
+        $templates = html_writer::tag('div',
+            html_writer::tag('table',
+            html_writer::tag('thead',
+            html_writer::tag('tr',
+            html_writer::tag('th',
+            html_writer::tag('h3',
+            html_writer::tag('span', '') .
+            html_writer::tag('span', 'X', array(
+                'class' => 'label label-important remove remove-category-label'
+            )))))) .
+            html_writer::tag('tbody', ''),
+            array('class' => 'table table-bordered table-striped')),
+                array('id' => 'grade-category-tmpl')
+            );
 
-                    return $OUTPUT->single_select(
-                        'index.php?id='.$data['courseid'],
-                        'template',
-                        $templates,
-                        $data['template']->id
-                    );
-                }
-            )
-        );
+        $templates .= html_writer::tag('div',
+            html_writer::tag('table',
+            html_writer::tag('tr',
+            html_writer::tag('td',
+            html_writer::tag('span',
+            html_writer::tag('span', 'X', array(
+                'class' => 'label label-important remove remove-item-label'
+            ))) .
+            html_writer::tag('div',
+                html_writer::empty_tag('input', array(
+                    'class' => 'input-tiny',
+                    'value' => '100'
+                )) .
+                html_writer::tag('span', 'Points', array(
+                    'class' => 'add-on'
+                )),
+                array('class' => 'input-append point-blank pull-right')
+            )))),
+            array('id' => 'grade-item-tmpl'));
 
-        quick_template::render('gradebook_builder_index.tpl', $data, 'gradereport_gradebook_builder', $funcs);
+        $templates .= html_writer::tag('div',
+            html_writer::tag('div',
+            html_writer::tag('label',
+            html_writer::empty_tag('span'),
+            array('class' => 'control-label')) .
+            html_writer::tag('div',
+                html_writer::tag('div',
+                html_writer::empty_tag('input', array(
+                    'type' => 'text',
+                    'class' => 'input-tiny',
+                    'value' => '0'
+                )) . html_writer::tag('span', '%', array(
+                    'class' => 'add-on'
+                )),
+                array('class' => 'input-append')),
+                array('class' => 'controls')),
+            array('class' => 'control-group')),
+            array('id' => 'category-weight-tmpl'));
+
+        echo $container . $templates;
     }
 
     function determine_instanceid($contextlevel) {
@@ -403,7 +527,7 @@ class grade_report_gradebook_builder extends grade_report {
 
             if ($templates) {
                 $label = $this->determine_label($contextlevel);
-                $options[$label] = $templates;
+                $options[$label] = array($label => $templates);
             }
         }
 
