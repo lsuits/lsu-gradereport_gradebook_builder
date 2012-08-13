@@ -30,12 +30,6 @@ tracker][issues].
 
 [issues]: https://github.com/lsuits/gradebook_builder/issues
 
-## Requirements
-
-Download the LSU [Quick Template][quick_template] system and install in lib/.
-
-[quick_template]: https://github.com/lsuits/quick_template
-
 ## License
 
 Gradebook Builder adopts the same license that Moodle does.
