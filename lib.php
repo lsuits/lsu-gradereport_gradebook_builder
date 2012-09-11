@@ -256,7 +256,7 @@ class grade_report_gradebook_builder extends grade_report {
         if (!$template) {
             $template = new stdClass;
             $template->id = null;
-            $template->name = 'New Template';
+            $template->name = $this->course->shortname;
             $template->contextlevel = CONTEXT_USER;
             $template->instanceid = $this->determine_instanceid(CONTEXT_USER);
             $template->data = '{}';
@@ -275,6 +275,18 @@ class grade_report_gradebook_builder extends grade_report {
     function output() {
         global $OUTPUT;
 
+        $help_step_0 = get_string('help_step_0', 'gradereport_gradebook_builder');
+        $help_step_1 = get_string('help_step_1', 'gradereport_gradebook_builder');
+        $help_step_2 = get_string('help_step_2', 'gradereport_gradebook_builder');
+        $help_step_3 = get_string('help_step_3', 'gradereport_gradebook_builder');
+        $help_step_4 = get_string('help_step_4', 'gradereport_gradebook_builder');
+        $help_step_5 = get_string('help_step_5', 'gradereport_gradebook_builder');
+
+        $step_1 = get_string('step_1', 'gradereport_gradebook_builder');
+        $step_2 = get_string('step_2', 'gradereport_gradebook_builder');
+        $step_3 = get_string('step_3', 'gradereport_gradebook_builder');
+        $step_4 = get_string('step_4', 'gradereport_gradebook_builder');
+
         $container = html_writer::tag('div',
             html_writer::tag('div',
             html_writer::tag('div',
@@ -287,11 +299,19 @@ class grade_report_gradebook_builder extends grade_report {
                 array('id' => 'template-name')),
             array('class' => 'span4')),
             array('class' => 'row')) .
+            html_writer::tag('div', 
+            html_writer::tag ('div', $help_step_0) . 
+            html_writer::tag ('ol', html_writer::tag ('li', $help_step_1) . 
+            html_writer::tag('li', $help_step_2) . 
+            html_writer::tag('li', $help_step_3) . 
+            html_writer::tag ('li', $help_step_4) . 
+            html_writer::tag ('li', $help_step_5)), 
+                array('id' => 'howto')) . 
             html_writer::tag('div',
                 html_writer::tag('div','',
                 array('class' => 'span4', 'id' => 'grade-categories')) .
                 html_writer::tag('div',
-                    $OUTPUT->heading('Add a Grade Category', 3) .
+                    $OUTPUT->heading($step_1, 3) .
                     html_writer::tag('form',
                     html_writer::empty_tag('input', array(
                         'type' => 'text',
@@ -305,7 +325,7 @@ class grade_report_gradebook_builder extends grade_report {
                         'id' => 'add-category'
                     ))) .
                     html_writer::tag('form',
-                    $OUTPUT->heading('Add Grade Item(s)', 3) .
+                    $OUTPUT->heading($step_2, 3) .
                     html_writer::tag('div',
                         html_writer::empty_tag('input', array(
                             'type' => 'text',
@@ -329,7 +349,7 @@ class grade_report_gradebook_builder extends grade_report {
                     ),
                     array('id' => 'add-items', 'class' => 'well form-inline')
                 ) . html_writer::tag('div',
-                    $OUTPUT->heading('Grading Method', 3) .
+                    $OUTPUT->heading($step_3, 3) .
                     html_writer::select(
                         $this->get_aggregations(), 'aggregations', '',
                         null, array('id' => 'grading-method')
@@ -359,12 +379,12 @@ class grade_report_gradebook_builder extends grade_report {
                         'type' => 'hidden',
                         'name' => 'template',
                         'value' => $this->template->id
-                    )) . html_writer::tag('button', 'Save to Gradebook', array(
+                    )) . html_writer::tag('span', $step_4, array('class' => 'bolder')) . html_writer::tag('button', 'Save to Gradebook', array(
                         'type' => 'submit',
                         'id' => 'save-button',
                         'class' => 'btn btn-large btn-primary'
                     )),
-                    array('method' => 'post', 'id' => 'builder')
+                    array('method' => 'post', 'id' => 'builder', 'class' => 'center')
                 ), array('class' => 'span8')),
                 array('class' => 'row'))
             , array('class' => 'container', 'id' => 'builder-start'));
