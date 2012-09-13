@@ -32,3 +32,6 @@ $string['step_1'] = 'Step 1: Add a Category';
 $string['step_2'] = 'Step 2: Add Grade Item(s)';
 $string['step_3'] = 'Step 3: Choose a Grading Method';
 $string['step_4'] = 'Step 4: ';
+
+$string['add'] = 'Add';
+$string['tocategory'] = ' to category ';

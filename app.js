@@ -43,7 +43,7 @@ $(document).ready(function() {
         $('select#add-item-category')
             .append('<option value="' + id + '">' + name + '</option>');
 
-        $('div#howto').replaceWith('<div class="help"><a href=http://grok.lsu.edu/Article.aspx?articleid=16094 target="_blank" class="help">help</a></div>');
+       // $('div#howto').replaceWith('<div class="help"><a href=http://grok.lsu.edu/Article.aspx?articleid=16094 target="_blank" class="help">help</a></div>');
 
         readjustWeight(function(tw) {
             tw.append(weights);
@@ -194,8 +194,10 @@ $(document).ready(function() {
 
         if (val === "10") {
             $('form#category-weights').show();
+        $('div#builder-start.container').addClass('taller');
         } else {
             $('form#category-weights').hide();
+        $('div#builder-start.container').removeClass('taller');
         }
 
     });

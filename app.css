@@ -71,9 +71,14 @@ body#page-grade-report-gradebook_builder-index {
 }
 
 #page-grade-report-gradebook_builder-index div#builder-start.container {
-  min-height: 450px;
+  min-height: 700px;
   padding: 10px;
 }
+
+#page-grade-report-gradebook_builder-index div#builder-start.container.taller {
+  min-height: 1200px;
+}   
+
 
 #page-grade-report-gradebook_builder-index div.row {
 }
@@ -94,7 +99,7 @@ body#page-grade-report-gradebook_builder-index {
 }
 
 #page-grade-report-gradebook_builder-index select#add-item-category {
-  max-width: 10em;
+  max-width: 8em;
 }   
 
 
@@ -214,13 +219,14 @@ body#page-grade-report-gradebook_builder-index {
 
 #page-grade-report-gradebook_builder-index #howto {
   padding: 10px;
-  margin-left: 5px;
   border: 1px solid #333;
-  margin-right: 450px;
+  margin-top: 10px;
+  margin-right: 0;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px; 
   box-shadow:inset 0 0 15px #ccc;
+  text-align: left;
 }
 
 #page-grade-report-gradebook_builder-index #howto li {
