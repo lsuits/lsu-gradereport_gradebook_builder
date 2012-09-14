@@ -98,6 +98,15 @@ body#page-grade-report-gradebook_builder-index {
   text-align: right;
 }
 
+#page-grade-report-gradebook_builder-index div.span8 div.control-group {
+  text-align: left;
+  height: 2.5em;
+}
+
+#page-grade-report-gradebook_builder-index div.span8 div.control-group div.controls {
+  float: right;
+}
+
 #page-grade-report-gradebook_builder-index select#add-item-category {
   max-width: 8em;
 }   
