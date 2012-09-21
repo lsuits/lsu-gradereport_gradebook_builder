@@ -253,13 +253,17 @@ class grade_report_gradebook_builder extends grade_report {
     function __construct($courseid, $gpr, $context, $template = null) {
         parent::__construct($courseid, $gpr, $context);
 
+        $csn = preg_replace('/(.+?) for .*/', '${1}', $this->course->shortname);
+
         if (!$template) {
             $template = new stdClass;
             $template->id = null;
-            $template->name = $this->course->shortname;
+            $template->name = $csn;
             $template->contextlevel = CONTEXT_USER;
             $template->instanceid = $this->determine_instanceid(CONTEXT_USER);
             $template->data = '{}';
+        } else {
+        $template->name = $csn;
         }
 
         $this->template = $template;
@@ -275,12 +279,16 @@ class grade_report_gradebook_builder extends grade_report {
     function output() {
         global $OUTPUT;
 
+        $help = get_string('help', 'gradereport_gradebook_builder');
+        $helplink = get_string('helplink', 'gradereport_gradebook_builder');
+        $instructions = get_string('instructions', 'gradereport_gradebook_builder');
         $help_step_0 = get_string('help_step_0', 'gradereport_gradebook_builder');
         $help_step_1 = get_string('help_step_1', 'gradereport_gradebook_builder');
         $help_step_2 = get_string('help_step_2', 'gradereport_gradebook_builder');
         $help_step_3 = get_string('help_step_3', 'gradereport_gradebook_builder');
         $help_step_4 = get_string('help_step_4', 'gradereport_gradebook_builder');
         $help_step_5 = get_string('help_step_5', 'gradereport_gradebook_builder');
+        $help_step_6 = get_string('help_step_6', 'gradereport_gradebook_builder');
 
         $step_1 = get_string('step_1', 'gradereport_gradebook_builder');
         $step_2 = get_string('step_2', 'gradereport_gradebook_builder');
@@ -380,16 +388,24 @@ class grade_report_gradebook_builder extends grade_report {
                         'class' => 'btn btn-large btn-primary'
                     )),
                     array('method' => 'post', 'id' => 'builder', 'class' => 'center')
-                ) . html_writer::tag('div',
-            html_writer::tag ('div', $help_step_0) .
-            html_writer::tag ('ol', html_writer::tag ('li', $help_step_1) .
-            html_writer::tag('li', $help_step_2) .
-            html_writer::tag('li', $help_step_3) .
-            html_writer::tag ('li', $help_step_4) .
-            html_writer::tag ('li', $help_step_5)),
-                array('id' => 'howto')), array('class' => 'span8')),
-                array('class' => 'row'))
-            , array('class' => 'container', 'id' => 'builder-start'));
+                ) .
+              html_writer::tag('div', 
+                  html_writer::tag ('div', $instructions .
+                          html_writer::tag ('a', $help, array('href' => $helplink, 'target' => '_blank', 'class' => 'help')),
+                  array('class' => 'instructions help')) .
+                  html_writer::tag ('div', $help_step_0,
+                      array('class' => 'help_instructions')) .
+                      html_writer::tag ('ol',
+                          html_writer::tag ('li', $help_step_1) .
+                          html_writer::tag('li', $help_step_2) .
+                          html_writer::tag('li', $help_step_3) .
+                          html_writer::tag ('li', $help_step_4) .
+                          html_writer::tag ('li', $help_step_5) .
+                          html_writer::tag ('li', $help_step_6)),
+              array('id' => 'howto')),
+            array('class' => 'span8')),
+          array('class' => 'row')),
+        array('class' => 'container', 'id' => 'builder-start'));
 
         $templates = html_writer::tag('div',
             html_writer::tag('table',
