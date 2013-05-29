@@ -38,7 +38,7 @@ class grade_report_gradebook_builder extends grade_report {
         )));
     }
 
-    function build_gradebook($courseid, $template) {
+    static function build_gradebook($courseid, $template) {
         global $DB, $CFG;
 
         require_once $CFG->dirroot . '/course/lib.php';
@@ -94,7 +94,7 @@ class grade_report_gradebook_builder extends grade_report {
         return true;
     }
 
-    function default_course_module($course, $item) {
+    static function default_course_module($course, $item) {
         global $DB;
 
         $newcm = new stdClass;
@@ -122,7 +122,7 @@ class grade_report_gradebook_builder extends grade_report {
     }
 
     // TODO: Is there a better way to handle this?
-    function default_mod_quiz($module) {
+    static function default_mod_quiz($module) {
         if (!class_exists('mod_quiz_display_options')) {
             global $CFG;
             require_once $CFG->dirroot . '/mod/quiz/locallib.php';
@@ -176,7 +176,7 @@ class grade_report_gradebook_builder extends grade_report {
         }
     }
 
-    function default_graded_module($course, $item) {
+    static function default_graded_module($course, $item) {
         $cm = self::default_course_module($course, $item);
 
         $module = new stdClass;
@@ -211,7 +211,7 @@ class grade_report_gradebook_builder extends grade_report {
         return $module;
     }
 
-    function build_mod_item($course, $category, $item) {
+    static function build_mod_item($course, $category, $item) {
         try {
             $instance = self::default_graded_module($course, $item);
 
@@ -232,7 +232,7 @@ class grade_report_gradebook_builder extends grade_report {
         return $grade_item;
     }
 
-    function build_manual_item($courseid, $category, $item) {
+    static function build_manual_item($courseid, $category, $item) {
         $grade_item = new grade_item(array(
             'courseid' => $courseid,
             'itemtype' => 'manual',
@@ -507,7 +507,7 @@ class grade_report_gradebook_builder extends grade_report {
         return $options;
     }
 
-    function get_aggregation_label($aggregation) {
+    static function get_aggregation_label($aggregation) {
         $_s = function($key) { return get_string($key, 'grades'); };
         switch ($aggregation) {
             case GRADE_AGGREGATE_MEAN: return $_s('aggregatemean');
@@ -590,8 +590,7 @@ class grade_report_gradebook_builder extends grade_report {
         return $options;
     }
 
-    function is_gradebook_established($courseid = null) {
-        $courseid = $courseid ? $courseid : $this->courseid;
+    static function is_gradebook_established($courseid) {
         $items = grade_item::fetch_all(array('courseid' => $courseid));
 
         return count($items) > 1;
