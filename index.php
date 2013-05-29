@@ -38,7 +38,7 @@ $template = $DB->get_record('gradereport_builder_template', array(
 
 $report = new grade_report_gradebook_builder($courseid, $gpr, $context, $template);
 
-if ($data = data_submitted() and !$report->is_gradebook_established()) {
+if ($data = data_submitted() and !$report::is_gradebook_established($courseid)) {
     $report->process_data($data);
 }
 
@@ -46,7 +46,7 @@ $report->inject_js();
 
 print_grade_page_head($course->id, 'report', 'gradebook_builder', $reportname);
 
-if ($report->is_gradebook_established()) {
+if ($report::is_gradebook_established($courseid)) {
     $gradebook_url = new moodle_url('/grade/edit/tree/index.php', array(
         'id' => $course->id
     ));
