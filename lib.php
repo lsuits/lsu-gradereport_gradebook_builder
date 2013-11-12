@@ -203,7 +203,7 @@ class grade_report_gradebook_builder extends grade_report {
 
         $module->id = $add_instance($module);
         $cm->instance = $module->id;
-        $cm->section = add_mod_to_section($module);
+        $cm->section = course_add_cm_to_section($module->course,$module->coursemodule,$module->section);
 
         global $DB;
         $DB->update_record('course_modules', $cm);
