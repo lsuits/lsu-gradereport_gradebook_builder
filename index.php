@@ -19,7 +19,7 @@ $course = $DB->get_record('course', $c_param, '*', MUST_EXIST);
 
 require_login($course);
 
-$context = get_context_instance(CONTEXT_COURSE, $course->id);
+$context = context_course::instance($course->id);
 
 require_capability('gradereport/gradebook_builder:view', $context);
 require_capability('moodle/grade:edit', $context);

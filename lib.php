@@ -491,9 +491,12 @@ class grade_report_gradebook_builder extends grade_report {
     }
 
     function determine_context($contextlevel) {
-        return get_context_instance(
-            $contextlevel, $this->determine_instanceid($contextlevel)
-        );
+        global $USER;
+        switch ($contextlevel) {
+            case CONTEXT_USER: return context_user::instance($USER->id);
+            case CONTEXT_COURSECAT: return context_coursecat::instance($this->course->category);
+            case CONTEXT_SYSTEM: return context_system::instance();;
+        }
     }
 
     function get_aggregations() {
