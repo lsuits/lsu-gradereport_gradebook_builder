@@ -5,6 +5,9 @@ require_once $CFG->libdir . '/gradelib.php';
 require_once $CFG->dirroot . '/grade/lib.php';
 require_once $CFG->dirroot . '/grade/report/gradebook_builder/lib.php';
 
+$PAGE->requires->jquery();
+$PAGE->requires->js('/grade/report/gradebook_builder/app.js');
+
 $courseid = required_param('id', PARAM_INT);
 $template_id = optional_param('template', null, PARAM_INT);
 
@@ -41,8 +44,6 @@ $report = new grade_report_gradebook_builder($courseid, $gpr, $context, $templat
 if ($data = data_submitted() and !$report::is_gradebook_established($courseid)) {
     $report->process_data($data);
 }
-
-$report->inject_js();
 
 print_grade_page_head($course->id, 'report', 'gradebook_builder', $reportname);
 
