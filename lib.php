@@ -3,6 +3,26 @@
 require_once $CFG->dirroot . '/grade/report/lib.php';
 
 class grade_report_gradebook_builder extends grade_report {
+
+    function __construct($courseid, $gpr, $context, $template = null) {
+        parent::__construct($courseid, $gpr, $context);
+
+        $csn = preg_replace('/(.+?) for .*/', '${1}', $this->course->shortname);
+
+        if (!$template) {
+            $template = new stdClass;
+            $template->id = null;
+            $template->name = $csn;
+            $template->contextlevel = CONTEXT_USER;
+            $template->instanceid = $this->determine_instanceid(CONTEXT_USER);
+            $template->data = '{}';
+        } else {
+        $template->name = $csn;
+        }
+
+        $this->template = $template;
+    }
+
     function process_data($data) {
         global $DB;
 
@@ -248,25 +268,6 @@ class grade_report_gradebook_builder extends grade_report {
     }
 
     function process_action($target, $action) {
-    }
-
-    function __construct($courseid, $gpr, $context, $template = null) {
-        parent::__construct($courseid, $gpr, $context);
-
-        $csn = preg_replace('/(.+?) for .*/', '${1}', $this->course->shortname);
-
-        if (!$template) {
-            $template = new stdClass;
-            $template->id = null;
-            $template->name = $csn;
-            $template->contextlevel = CONTEXT_USER;
-            $template->instanceid = $this->determine_instanceid(CONTEXT_USER);
-            $template->data = '{}';
-        } else {
-        $template->name = $csn;
-        }
-
-        $this->template = $template;
     }
 
     function output() {
