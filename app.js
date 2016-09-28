@@ -1,4 +1,33 @@
 $(document).ready(function() {
+    // handle event: remove category button clicked
+    $(document).on('click', 'span.remove-category-label', function (e) {
+        var elem = $(e.currentTarget),
+            table = elem.parent().parent().parent().parent().parent(),
+            id = table.attr('id'),
+            name = elem.parent().find('span:first').html();
+
+        table.remove();
+
+        readjustWeight(function() {
+            $('div.control-group[data-categoryid="' + id + '"]').remove();
+        });
+
+        $('#add-item-category').children('option[value=' + id + ']').remove();
+    });
+
+    // handle event: grade item input change
+    // Save item point value
+    $(document).on('focusout', 'div.point-blank input', function (e) {
+        var elem = $(e.currentTarget);
+        var val = elem.val();
+        // TODO: some kind of numeric evaluation?
+    });
+
+    // handle event: remove item span clicked
+    $(document).on('click', 'span.remove-item-label', function (e) {
+        $(e.currentTarget).parent().parent().parent().remove();
+    });
+
     var category_tmpl = $('div#grade-category-tmpl').find('table'),
         item_tmpl = $('div#grade-item-tmpl').find('tr'),
         weight_tmpl = $('div#category-weight-tmpl').find('div:first'),
@@ -121,30 +150,6 @@ $(document).ready(function() {
         add_item(category_name, '');
     });
 
-    // Save item point value
-    $('div.point-blank input').on('focusout', 'input', function(e) {
-        var elem = $(e.currentTarget);
-        var val = elem.val();
-
-        // TODO: some kind of numeric evaluation?
-    });
-
-    // Category remove button
-    $('span.remove-category-label').on('click', 'span', function(e) {
-        var elem = $(e.currentTarget),
-            table = elem.parent().parent().parent().parent().parent(),
-            id = table.attr('id'),
-            name = elem.parent().find('span:first').html();
-
-        table.remove();
-
-        readjustWeight(function() {
-            $('div.control-group[data-categoryid="' + id + '"]').remove();
-        });
-
-        $('#add-item-category').children('option[value=' + id + ']').remove();
-    });
-
     // Template name
     $("#template-toggle-input").on('click', function() {
         var s = $(this);
@@ -160,10 +165,7 @@ $(document).ready(function() {
         return false;
     });
 
-    // Item remove button
-    $('span.remove-item-label').on('click', 'span', function(e) {
-        $(e.currentTarget).parent().parent().parent().remove();
-    });
+    
 
 
 /*
