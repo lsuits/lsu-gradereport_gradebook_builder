@@ -122,7 +122,7 @@ $(document).ready(function() {
     });
 
     // Save item point value
-    $('div.point-blank input').live('focusout', function(e) {
+    $('div.point-blank input').on('focusout', 'input', function(e) {
         var elem = $(e.currentTarget);
         var val = elem.val();
 
@@ -130,7 +130,7 @@ $(document).ready(function() {
     });
 
     // Category remove button
-    $('span.remove-category-label').live('click', function(e) {
+    $('span.remove-category-label').on('click', 'span', function(e) {
         var elem = $(e.currentTarget),
             table = elem.parent().parent().parent().parent().parent(),
             id = table.attr('id'),
@@ -161,7 +161,7 @@ $(document).ready(function() {
     });
 
     // Item remove button
-    $('span.remove-item-label').live('click', function(e) {
+    $('span.remove-item-label').on('click', 'span', function(e) {
         $(e.currentTarget).parent().parent().parent().remove();
     });
 
