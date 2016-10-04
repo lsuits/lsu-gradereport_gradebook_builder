@@ -271,6 +271,10 @@ class grade_report_gradebook_builder extends grade_report {
     }
 
     function output() {
+        echo $this->getContainerOutput() . $this->getTemplatesOutput();
+    }
+
+    function getContainerOutput() {
         global $OUTPUT;
 
         $help = get_string('help', 'gradereport_gradebook_builder');
@@ -292,168 +296,211 @@ class grade_report_gradebook_builder extends grade_report {
         $add = get_string('add', 'gradereport_gradebook_builder');
         $tocategory = get_string('tocategory', 'gradereport_gradebook_builder');
 
-        $container = 
+        $output = 
+        html_writer::tag('div',
             html_writer::tag('div',
+                html_writer::tag('div', 
+                    $OUTPUT->single_select('index.php?id=' . $this->courseid, 'template', $this->get_templates(), $this->template->id)
+                    .
+                    html_writer::tag('h4',
+                        html_writer::tag('span',
+                            $this->template->name,
+                        ['id' => 'template-toggle-input', 'class' => 'linky']),
+                    ['id' => 'template-name']),
+                ['class' => 'col-md-12']),
+            ['class' => 'row']) 
+            .
+            html_writer::tag('div',
+
+                // LEFT COLUMN
+                
+                html_writer::tag('div', '', 
+                ['class' => 'col-md-5 col-lg-6', 'id' => 'grade-categories']) 
+                .
+                
+                // RIGHT COLUMN
+                
                 html_writer::tag('div',
-                    html_writer::tag('div', 
-                        $OUTPUT->single_select('index.php?id=' . $this->courseid, 'template', $this->get_templates(), $this->template->id) . html_writer::tag('h3',
-                                html_writer::tag('span',
-                                    $this->template->name,
-                                ['id' => 'template-toggle-input', 'class' => 'linky']),
-                            ['id' => 'template-name']),
-                    ['class' => 'span4']),
-                ['class' => 'row']) .
-                html_writer::tag('div',
-                    html_writer::tag('div','', ['class' => 'span4', 'id' => 'grade-categories']) .
-                html_writer::tag('div',
-                    $OUTPUT->heading($step_1, 3) .
+                    // STEP 1
                     html_writer::tag('form',
-                    html_writer::empty_tag('input', [
-                        'type' => 'text',
-                        'class' => 'input-medium',
-                        'id' => 'category-name',
-                        'placeholder' => 'Category Name'
-                    ]) . '&nbsp;' .
-                    html_writer::tag('button', $add, [
-                        'type' => 'submit',
-                        'class' => 'btn btn-primary',
-                        'id' => 'add-category'
-                    ])) .
+                        $OUTPUT->heading($step_1, 4)
+                        .
+                        html_writer::empty_tag('input',
+                        ['type' => 'text', 'class' => 'input-large', 'id' => 'category-name', 'placeholder' => 'Category Name']) 
+                        . 
+                        '&nbsp;' 
+                        .
+                        html_writer::tag('button', 
+                        $add, 
+                        ['type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'add-category']),
+                    ['class' => 'well']) 
+                    .
+                    // STEP 2
                     html_writer::tag('form',
-                    $OUTPUT->heading($step_2, 3) .
+                        $OUTPUT->heading($step_2, 4) 
+                        .
+                        html_writer::tag('div',
+                            html_writer::empty_tag('input', 
+                            ['type' => 'text', 'class' => 'input-mini', 'id' => 'grade-item-num-add', 'value' => '1']) 
+                            . 
+                            '&nbsp;' 
+                            .
+                            html_writer::select($this->get_graded_options(), 'grade_options', '', null, 
+                            ['id' => 'grade-itemtype']) 
+                            . 
+                            $tocategory 
+                            .
+                            html_writer::tag('select', '', 
+                            ['id' => 'add-item-category']) 
+                            . 
+                            '&nbsp;' 
+                            .
+                            html_writer::tag('button', 
+                            $add, 
+                            ['type' => 'submit', 'class' => 'btn btn-primary', 'id' => 'add-item']),
+                        ['class' => 'nowrap']),
+                    ['id' => 'add-items', 'class' => 'well form-inline'])
+                    . 
+                    // STEP 3
                     html_writer::tag('div',
-                        html_writer::empty_tag('input', [
-                            'type' => 'text',
-                            'class' => 'input-tiny',
-                            'id' => 'grade-item-num-add',
-                            'value' => '1'
-                        ]) . '&nbsp;' .
-                        html_writer::select(
-                            $this->get_graded_options(), 'grade_options', '',
-                            null, ['id' => 'grade-itemtype']
-                        ) . $tocategory .
-                        html_writer::tag('select', '', [
-                            'id' => 'add-item-category'
-                        ]) . '&nbsp;' .
-                        html_writer::tag('button', $add, [
-                            'type' => 'submit',
-                            'class' => 'btn btn-primary',
-                            'id' => 'add-item'
-                        ]),
-                        ['class' => 'nowrap']
-                    ),
-                    ['id' => 'add-items', 'class' => 'well form-inline']
-                ) . html_writer::tag('div',
-                    $OUTPUT->heading($step_3, 3) .
-                    html_writer::select(
-                        $this->get_aggregations(), 'aggregations', '',
-                        null, ['id' => 'grading-method']
-                    ) . html_writer::tag('form',
-                        $OUTPUT->heading('Category Weights', 3) .
+                        $OUTPUT->heading($step_3, 4)
+                        .
+                        html_writer::select($this->get_aggregations(), 'aggregations', '', null, 
+                        ['id' => 'grading-method']) 
+                        . 
+                        html_writer::tag('form', $OUTPUT->heading('Category Weights', 4) 
+                        .
                         html_writer::tag('fieldset', ''),
-                            ['id' => 'category-weights']),
-                    ['class' => 'well']
-                ) . html_writer::tag('form',
-                    html_writer::empty_tag('input', [
-                        'type' => 'hidden',
-                        'name' => 'id',
-                        'value' => $this->courseid
-                    ]) . html_writer::empty_tag('input', [
-                        'type' => 'hidden',
-                        'name' => 'name',
-                        'value' => $this->template->name
-                    ]) . html_writer::empty_tag('input', [
-                        'type' => 'hidden',
-                        'name' => 'data',
-                        'value' => $this->template->data
-                    ]) . html_writer::empty_tag('input', [
-                        'type' => 'hidden',
-                        'name' => 'contextlevel',
-                        'value' => $this->template->contextlevel
-                    ]) . html_writer::empty_tag('input', [
-                        'type' => 'hidden',
-                        'name' => 'template',
-                        'value' => $this->template->id
-                    ]) . html_writer::tag('span', $step_4, ['class' => 'bolder']) . html_writer::tag('button', 'Save to Gradebook', [
-                        'type' => 'submit',
-                        'id' => 'save-button',
-                        'class' => 'btn btn-large btn-primary'
-                    ]),
-                    ['method' => 'post', 'id' => 'builder', 'class' => 'center']
-                ) .
-              html_writer::tag('div', 
-                  html_writer::tag ('div', $instructions .
-                          html_writer::tag ('a', $help, ['href' => $helplink, 'target' => '_blank', 'class' => 'help']),
-                  ['class' => 'instructions help']) .
-                  html_writer::tag ('div', $help_step_0,
-                      ['class' => 'help_instructions']) .
-                      html_writer::tag ('ol',
-                          html_writer::tag ('li', $help_step_1) .
-                          html_writer::tag('li', $help_step_2) .
-                          html_writer::tag('li', $help_step_3) .
-                          html_writer::tag ('li', $help_step_4) .
-                          html_writer::tag ('li', $help_step_5) .
-                          html_writer::tag ('li', $help_step_6)),
-              ['id' => 'howto']),
-            ['class' => 'span8']),
-          ['class' => 'row']),
-        ['class' => 'container', 'id' => 'builder-start']);
+                        ['id' => 'category-weights']),
+                    ['class' => 'well']) 
+                    . 
+                    // STEP 4
+                    html_writer::tag('form',
+                        html_writer::empty_tag('input', 
+                        ['type' => 'hidden', 'name' => 'id', 'value' => $this->courseid]) 
+                        . 
+                        html_writer::empty_tag('input', 
+                        ['type' => 'hidden', 'name' => 'name', 'value' => $this->template->name]) 
+                        . 
+                        html_writer::empty_tag('input', 
+                        ['type' => 'hidden', 'name' => 'data', 'value' => $this->template->data]) 
+                        . 
+                        html_writer::empty_tag('input', 
+                        ['type' => 'hidden', 'name' => 'contextlevel', 'value' => $this->template->contextlevel]) 
+                        . 
+                        html_writer::empty_tag('input', 
+                        ['type' => 'hidden', 'name' => 'template', 'value' => $this->template->id]) 
+                        . 
+                        html_writer::tag('span', 
+                            $step_4, 
+                        ['class' => 'bolder']) 
+                        . 
+                        html_writer::tag('button', 'Save to Gradebook', 
+                        ['type' => 'submit', 'id' => 'save-button', 'class' => 'btn btn-large btn-primary']),
+                    ['method' => 'post', 'id' => 'builder', 'class' => 'center well']) 
+                    .
+                    // INSTRUCTIONS
+                    html_writer::tag('div', 
+                        html_writer::tag('div', 
+                            $instructions 
+                            .
+                            html_writer::tag('a', 
+                            $help, 
+                            ['href' => $helplink, 'target' => '_blank', 'class' => 'help']),
+                        ['class' => 'instructions help'])
+                        .
+                        html_writer::tag('div', 
+                            $help_step_0,
+                        ['class' => 'help_instructions'])
+                        .
+                        html_writer::tag('ol',
+                            html_writer::tag('li', 
+                                $help_step_1) 
+                            .
+                            html_writer::tag('li', 
+                                $help_step_2)
+                            .
+                            html_writer::tag('li', 
+                                $help_step_3) 
+                            .
+                            html_writer::tag('li', 
+                                $help_step_4) 
+                            .
+                            html_writer::tag('li', 
+                                $help_step_5) 
+                            .
+                            html_writer::tag('li', 
+                                $help_step_6)
+                        ),
+                    ['id' => 'howto']),
+                ['class' => 'col-md-7 col-lg-6']),
+            ['class' => 'row']),
+        ['class' => 'container-fluid', 'id' => 'builder-start']);
 
-        $templates = html_writer::tag('div',
+        return $output;
+    }
+
+    function getTemplatesOutput() {
+        $output = 
+        html_writer::tag('div',
             html_writer::tag('table',
-            html_writer::tag('thead',
-            html_writer::tag('tr',
-            html_writer::tag('th',
-            html_writer::tag('h3',
-            html_writer::tag('span', '') .
-            html_writer::tag('span', 'X', [
-                'class' => 'label label-important remove remove-category-label'
-            ]))))) .
-            html_writer::tag('tbody', ''),
+                html_writer::tag('thead',
+                    html_writer::tag('tr',
+                        html_writer::tag('th',
+                            html_writer::tag('h4',
+                                html_writer::tag('span', '')
+                                .
+                                html_writer::tag('span', 'X', 
+                                ['class' => 'label label-important remove remove-category-label'])
+                            )
+                        )
+                    )
+                ) 
+                .
+                html_writer::tag('tbody', ''),
             ['class' => 'table table-bordered table-striped']),
-                ['id' => 'grade-category-tmpl']
-            );
+        ['id' => 'grade-category-tmpl']);
 
-        $templates .= html_writer::tag('div',
+        $output .= 
+        html_writer::tag('div',
             html_writer::tag('table',
-            html_writer::tag('tr',
-            html_writer::tag('td',
-            html_writer::tag('span',
-            html_writer::tag('span', 'X', [
-                'class' => 'label label-important remove remove-item-label'
-            ])) .
-            html_writer::tag('div',
-                html_writer::empty_tag('input', [
-                    'class' => 'input-tiny',
-                    'value' => '100'
-                ]) .
-                html_writer::tag('span', 'Points', [
-                    'class' => 'add-on'
-                ]),
-                ['class' => 'input-append point-blank pull-right']
-            )))),
-            ['id' => 'grade-item-tmpl']);
+                html_writer::tag('tr',
+                    html_writer::tag('td',
+                        html_writer::tag('span',
+                            html_writer::tag('span', 'X', 
+                            ['class' => 'label label-important remove remove-item-label'])
+                        )
+                        .
+                        html_writer::tag('div',
+                            html_writer::empty_tag('input', ['class' => 'input-mini', 'value' => '100'])
+                            .
+                            html_writer::tag('span', 'Points', ['class' => 'add-on']),
+                        ['class' => 'input-append point-blank pull-right'])
+                    )
+                )
+            ),
+        ['id' => 'grade-item-tmpl']);
 
-        $templates .= html_writer::tag('div',
+        $output .= 
+        html_writer::tag('div',
             html_writer::tag('div',
-            html_writer::tag('label',
-            html_writer::empty_tag('span'),
-            ['class' => 'control-label']) .
-            html_writer::tag('div',
+                html_writer::tag('label',
+                    html_writer::empty_tag('span'),
+                    ['class' => 'control-label']
+                ) 
+                .
                 html_writer::tag('div',
-                html_writer::empty_tag('input', [
-                    'type' => 'text',
-                    'class' => 'input-tiny',
-                    'value' => '0'
-                ]) . html_writer::tag('span', '%', [
-                    'class' => 'add-on'
-                ]),
-                ['class' => 'input-append']),
+                    html_writer::tag('div',
+                        html_writer::empty_tag('input', 
+                        ['type' => 'text', 'class' => 'input-mini', 'value' => '0'])
+                        . 
+                        html_writer::tag('span', '%', ['class' => 'add-on', 'style' => 'padding-top: 0px;']),
+                    ['class' => 'input-append']),
                 ['class' => 'controls']),
             ['class' => 'control-group']),
-            ['id' => 'category-weight-tmpl']);
+        ['id' => 'category-weight-tmpl']);
 
-        echo $container . $templates;
+        return $output;
     }
 
     function determine_instanceid($contextlevel) {

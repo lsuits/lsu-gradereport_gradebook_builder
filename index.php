@@ -15,6 +15,7 @@ $c_param = array('id' => $courseid);
 
 $PAGE->set_url(new moodle_url('/grade/report/gradebook_builder/index.php', $c_param));
 
+$PAGE->requires->css('/grade/report/gradebook_builder/grid.css');
 $PAGE->requires->css('/grade/report/gradebook_builder/app.css');
 
 $course = $DB->get_record('course', $c_param, '*', MUST_EXIST);

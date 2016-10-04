@@ -1,110 +1,72 @@
-body#page-grade-report-gradebook_builder-index {
-   min-width: 800px;
+#page-grade-report-gradebook_builder-index h4#template-name{
+  text-align: center;
 }
 
-#page-grade-report-gradebook_builder-index select.menutemplate {
-    float: left;
-    max-width: 150px;
-}
-
-#page-grade-report-gradebook_builder-index h3#template-name{
-    margin-left: 20%;
-}
-
-#page-grade-report-gradebook_builder-index form#category-weights {
-    display: none;
-}
-
-#page-grade-report-gradebook_builder-index div#grade-category-tmpl {
-    display: none;
-}
-
-#page-grade-report-gradebook_builder-index div#grade-item-tmpl {
-    display: none;
-}
-
+#page-grade-report-gradebook_builder-index form#category-weights,
+#page-grade-report-gradebook_builder-index div#grade-category-tmpl,
+#page-grade-report-gradebook_builder-index div#grade-item-tmpl,
 #page-grade-report-gradebook_builder-index div#category-weight-tmpl {
-    display: none;
+  display: none;
+}
+
+#page-grade-report-gradebook_builder-index form#category-weights fieldset div.control-group {
+  margin-top:14px;
 }
 
 #page-grade-report-gradebook_builder-index div.point-blank {
-    display: inline;
-    margin-bottom: 0px;
+  display: inline;
+  margin-bottom: 0px;
 }
 
 #page-grade-report-gradebook_builder-index div.point-blank input {
-    margin-bottom: 0px;
+  margin-bottom: 0px;
+}
+
+#page-grade-report-gradebook_builder-index div.point-blank span.add-on {
+  height: 26px;
 }
 
 #page-grade-report-gradebook_builder-index span.remove-button {
-    border: 1px solid #333;
-    padding: 0px;
+  border: 1px solid #333;
+  padding: 0px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
 }
 
-#page-grade-report-gradebook_builder-index span.remove-item-label {
-    float: right;
-    cursor: pointer;
-}
-
+#page-grade-report-gradebook_builder-index span.remove-item-label,
 #page-grade-report-gradebook_builder-index span.remove-category-label {
-    float: right;
-    cursor: pointer;
+  float: right;
+  cursor: pointer;
+  margin-left: 5px;
+  margin-top: 4px;
 }
 
-#page-grade-report-gradebook_builder-index div.hero-unit {
-    padding: 24px;
-    margin-bottom: 20px;
+#page-grade-report-gradebook_builder-index div#builder-start.container-fluid {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin: 10px 30px 10px 30px;
+  background-color: #fff;
+  box-shadow: 0 0 15px #bbb;
 }
 
-#page-grade-report-gradebook_builder-index div.hero-unit h1 {
-    text-align: center;
-    font-size: 52px;
-}
-
-#page-grade-report-gradebook_builder-index div#builder-start.container {
-   margin: 10px 30px 10px 30px;
-   background-color: #fff;
-   box-shadow: 0 0 15px #bbb;
-}
-
-#page-grade-report-gradebook_builder-index div#builder-start.container {
-  min-height: 775px;
-  padding: 10px;
-}
-
-#page-grade-report-gradebook_builder-index div#builder-start.container.taller {
-  min-height: 1200px;
-}   
-
-
-#page-grade-report-gradebook_builder-index div.row {
-}
-
-#page-grade-report-gradebook_builder-index div#grade-categories.span4 {
-  margin-right: 450px;
+#page-grade-report-gradebook_builder-index div#grade-categories {
   font-weight: normal;
   line-height: 1.5em;
 }
 
-#page-grade-report-gradebook_builder-index div.span8 {
-  position: absolute;
-  background-color: #fff;
-  right: 50px;
-  top: 140px;
-  width: 415px;
-  text-align: right;
-}
-
-#page-grade-report-gradebook_builder-index div.span8 div.control-group {
+#page-grade-report-gradebook_builder-index .control-group {
   text-align: left;
   height: 2.5em;
 }
 
-#page-grade-report-gradebook_builder-index div.span8 div.control-group div.controls {
-  float: right;
+#page-grade-report-gradebook_builder-index .control-group div.controls {
+  /*float: right;*/
+}
+
+#page-grade-report-gradebook_builder-index input#category-name,
+#page-grade-report-gradebook_builder-index input#grade-item-num-add {
+  height: 26px;
 }
 
 #page-grade-report-gradebook_builder-index select#add-item-category {
@@ -116,11 +78,7 @@ body#page-grade-report-gradebook_builder-index {
   white-space: nowrap;
 }
 
-#page-grade-report-gradebook_builder-index div#grade-categories.span4 table.table {
-   width: 100%;
-}
-
-#page-grade-report-gradebook_builder-index div table h3 {
+#page-grade-report-gradebook_builder-index div table h4 {
    text-align: left;
 }
 
@@ -248,10 +206,6 @@ body#page-grade-report-gradebook_builder-index {
   display: none;
 }
 
-#page-grade-report-gradebook_builder-index span.add-on {
-  margin-left: 5px;
-}
-
 #page-grade-report-gradebook_builder-index span.bolder {
   font-weight: bold;
   font-size: 14px;
@@ -262,7 +216,7 @@ body#page-grade-report-gradebook_builder-index {
   margin-top: 15px;
 }
 
-#page-grade-report-gradebook_builder-index h3.main {
+#page-grade-report-gradebook_builder-index h4.main {
   text-align: left !important;
 }
 

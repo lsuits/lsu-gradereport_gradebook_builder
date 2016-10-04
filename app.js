@@ -63,7 +63,7 @@ $(document).ready(function() {
             return;
         }
 
-        category.find('h3').replaceWith('<h3><span>' + name + '</span> <span class="label label-important remove-category-label">X</span></h3>');
+        category.find('h4').replaceWith('<h4><span>' + name + '</span> <span class="label label-important remove-category-label">X</span></h4>');
 
         weights.find('span:first').replaceWith('<span>' + name + '</span>');
 
@@ -92,7 +92,7 @@ $(document).ready(function() {
         callback(tw);
 
         var sep = Math.round(target_weight / tw.children().length);
-        tw.find('.input-tiny').each(function(i, elem) {
+        tw.find('.input-mini').each(function(i, elem) {
             var val = $(elem).val();
             console.log(parseFloat(val));
             console.log(old_sep);
@@ -134,7 +134,7 @@ $(document).ready(function() {
             item.find('span:first').replaceWith('<span data-itemtype="' + itemtype + '">' + itemname + ' <span class="label label-important remove-item-label">X</span></span>');
 
             if (points) {
-                item.find('input.input-tiny').val(points);
+                item.find('input.input-mini').val(points);
             }
 
             category.append(item);
@@ -216,14 +216,14 @@ $(document).ready(function() {
         gb['categories'] = [];
 
         if (gb['aggregation'] === "10") {
-            tw.find('.input-tiny').each(function() {
+            tw.find('.input-mini').each(function() {
                 total_weight += isNaN($(this).val()) ? 0 : parseFloat($(this).val());
             });
 
-            $('#category-weights h3').siblings('.error').remove();
+            $('#category-weights h4').siblings('.error').remove();
 
             if (total_weight != 100) {
-                $('#category-weights h3')
+                $('#category-weights h4')
                     .after('<div class="error">Does not total 100%</div>');
                 errors.push('total');
             }
@@ -250,9 +250,9 @@ $(document).ready(function() {
             parent.find('td').each(function() {
                 var gi_name = $(this).find('span:first').clone().children().remove().end().text().trim();
                 var gi_itemtype = $(this).find('span:first').clone().attr('data-itemtype');
-                var gi_points = $(this).find('input.input-tiny').val();
+                var gi_points = $(this).find('input.input-mini').val();
 
-                if (!checkElemWeight($(this).find('input.input-tiny'), gi_points)) {
+                if (!checkElemWeight($(this).find('input.input-mini'), gi_points)) {
                     errors.push(gi_name + ' bad number');
                     return;
                 }
