@@ -66,10 +66,11 @@ $template = $DB->get_record('gradereport_builder_template', array(
 
 $report = new grade_report_gradebook_builder($courseid, $gpr, $context, $template);
 
-if ($data = data_submitted() and !$report::is_gradebook_established($courseid)) {}
+if ($data = data_submitted() and !$report::is_gradebook_established($courseid)) {
+    $report->process_data($data);
+}
 
 print_grade_page_head($course->id, 'report', 'gradebook_builder', get_string('pluginname', 'gradereport_gradebook_builder'));
-groups_print_course_menu($course, $gpr->get_return_url('index.php?id='.$courseid, $template_id ? ['template' => $template_id] : ''));
 
 if ($report::is_gradebook_established($courseid)) {
     $gradebook_url = new moodle_url('/grade/edit/tree/index.php', array(

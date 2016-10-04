@@ -1,5 +1,17 @@
-#page-grade-report-gradebook_builder-index h4#template-name{
+#page-grade-report-gradebook_builder-index h4#template-name {
   text-align: center;
+}
+
+#page-grade-report-gradebook_builder-index div#page-header {
+  width: 100%;
+}
+
+#page-grade-report-gradebook_builder-index div.coursetitle, #page-grade-report-gradebook_builder-index div.bor {
+  display: none;
+}
+
+#page-grade-report-gradebook_builder-index div#page-top-header {
+  width: 100%;
 }
 
 #page-grade-report-gradebook_builder-index form#category-weights,
@@ -10,7 +22,11 @@
 }
 
 #page-grade-report-gradebook_builder-index form#category-weights fieldset div.control-group {
-  margin-top:14px;
+  margin-top:25px;
+}
+
+#page-grade-report-gradebook_builder-index form#category-weights fieldset div.control-group:first-of-type {
+  margin-top:5px;
 }
 
 #page-grade-report-gradebook_builder-index div.point-blank {
@@ -45,9 +61,8 @@
 #page-grade-report-gradebook_builder-index div#builder-start.container-fluid {
   padding-top: 20px;
   padding-bottom: 20px;
-  margin: 10px 30px 10px 30px;
+  margin: 0;
   background-color: #fff;
-  box-shadow: 0 0 15px #bbb;
 }
 
 #page-grade-report-gradebook_builder-index div#grade-categories {
@@ -193,7 +208,6 @@
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px; 
-  box-shadow:inset 0 0 15px #aaa;
   text-align: left;
 }
 
@@ -238,10 +252,8 @@
    text-align: center;
    -webkit-border-radius: 3px 3px 0 0;
    -moz-border-radius: 3px 3px 0 0;
-   background: url('images/left.gif') -1px center no-repeat, url('images/right.gif') right center no-repeat, url('images/tabrow1.gif') center center repeat-x;
-   background: transparent url('images/tabrow1.gif') center center repeat-x;
-   box-shadow: inset 0 0 20px #fff;
    border-radius: 3px 3px 0 0;
+   background-color: #eeeeee;
    color: #000;
    font-size: 14px;
    padding: 3px;
